@@ -183,7 +183,7 @@
 
                     </ul>
                 </li>
-{{-- Removed from here--}}
+
               @if( in_array($role, ['admin', 'customer']) )
                 <li class="sidebar-header">
                     Manage Website
@@ -196,58 +196,53 @@
                 </li>
             @endif
 
-{{--                <li class="sidebar-item {{ request()->is('paxful*') ? 'active' : '' }} ">--}}
-{{--                    <a data-target="#paxful" data-toggle="collapse" class="sidebar-link collapsed">--}}
-{{--                        <i class="align-middle" data-feather="activity"></i>--}}
-{{--                        <span class="align-middle">Paxful</span>--}}
-{{--                    </a>--}}
-{{--                    <ul id="paxful"--}}
-{{--                        class="sidebar-dropdown list-unstyled collapse {{ request()->is('paxful*') ? 'show' : '' }}"--}}
-{{--                        data-parent="#sidebar">--}}
-{{--                        <li class="sidebar-item {{ request()->is('paxful/offers/all') ? 'active' : '' }}">--}}
-{{--                            <a class="sidebar-link" href="{{ route('api.offers_all') }}">--}}
-{{--                                <i class="align-middle" data-feather="file-text"></i>--}}
-{{--                                <span class="align-middle">All Offers</span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                        <li class="sidebar-item {{ request()->is('paxful/trades/all') ? 'active' : '' }}">--}}
-{{--                            <a class="sidebar-link" href="{{ route('api.trades_active') }}">--}}
-{{--                                <i class="align-middle" data-feather="file-text"></i>--}}
-{{--                                <span class="align-middle">Trades (Active)</span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                        <li class="sidebar-item {{ request()->is('paxful/trades/completed') ? 'active' : '' }}">--}}
-{{--                            <a class="sidebar-link" href="{{ route('api.trades_completed') }}">--}}
-{{--                                <i class="align-middle" data-feather="file-text"></i>--}}
-{{--                                <span class="align-middle">Trades (All)</span>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                    </ul>--}}
-{{--                </li>--}}
-
-            <li class="sidebar-item {{ request()->is('messages*') ? 'active' : '' }} ">
-                <a data-target="#messages" data-toggle="collapse" class="sidebar-link collapsed">
+            <li class="sidebar-item {{ request()->is('tags*') ? 'active' : '' }} ">
+                <a data-target="#tags" data-toggle="collapse" class="sidebar-link collapsed">
                     <i class="align-middle" data-feather="message-circle"></i>
-                    <span class="align-middle">Messages</span>
+                    <span class="align-middle">Tags</span>
                 </a>
-                <ul id="messages"
-                    class="sidebar-dropdown list-unstyled collapse {{ request()->is('messages*') ? 'show' : '' }}"
+                <ul id="tags"
+                    class="sidebar-dropdown list-unstyled collapse {{ request()->is('tags*') ? 'show' : '' }}"
                     data-parent="#sidebar">
 
-                    <li class="sidebar-item {{ request()->is('messages') ? 'active' : '' }}">
-                        <a class="sidebar-link" href="{{ route('messages.index') }}">
+                    <li class="sidebar-item {{ request()->is('tags') ? 'active' : '' }}">
+                        <a class="sidebar-link" href="{{ route('tags.index') }}">
                             <i class="align-middle" data-feather="message-circle"></i>
-                            <span class="align-middle">All Messages</span>
+                            <span class="align-middle">All Tags</span>
                         </a>
                     </li>
-                    <li class="sidebar-item {{ request()->is('messages/create') ? 'active' : '' }}">
-                        <a class="sidebar-link" href="{{ route('messages.create') }}">
+                    <li class="sidebar-item {{ request()->is('tags/create') ? 'active' : '' }}">
+                        <a class="sidebar-link" href="{{ route('tags.create') }}">
                             <i class="align-middle" data-feather="plus-square"></i>
-                            <span class="align-middle">Add New Message</span>
+                            <span class="align-middle">Add New Tag</span>
                         </a>
                     </li>
                 </ul>
             </li>
+
+{{--            <li class="sidebar-item {{ request()->is('messages*') ? 'active' : '' }} ">--}}
+{{--                <a data-target="#messages" data-toggle="collapse" class="sidebar-link collapsed">--}}
+{{--                    <i class="align-middle" data-feather="message-circle"></i>--}}
+{{--                    <span class="align-middle">Messages</span>--}}
+{{--                </a>--}}
+{{--                <ul id="messages"--}}
+{{--                    class="sidebar-dropdown list-unstyled collapse {{ request()->is('messages*') ? 'show' : '' }}"--}}
+{{--                    data-parent="#sidebar">--}}
+
+{{--                    <li class="sidebar-item {{ request()->is('messages') ? 'active' : '' }}">--}}
+{{--                        <a class="sidebar-link" href="{{ route('messages.index') }}">--}}
+{{--                            <i class="align-middle" data-feather="message-circle"></i>--}}
+{{--                            <span class="align-middle">All Messages</span>--}}
+{{--                        </a>--}}
+{{--                    </li>--}}
+{{--                    <li class="sidebar-item {{ request()->is('messages/create') ? 'active' : '' }}">--}}
+{{--                        <a class="sidebar-link" href="{{ route('messages.create') }}">--}}
+{{--                            <i class="align-middle" data-feather="plus-square"></i>--}}
+{{--                            <span class="align-middle">Add New Message</span>--}}
+{{--                        </a>--}}
+{{--                    </li>--}}
+{{--                </ul>--}}
+{{--            </li>--}}
 
 
         </ul>

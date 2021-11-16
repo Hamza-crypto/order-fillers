@@ -35,6 +35,8 @@
 {{--        </div>--}}
 {{--    @endif--}}
 {{--    @if($open)--}}
+
+
         <h1 class="h3 mb-3">Add New Order </h1>
 
         <div class="row">
@@ -53,7 +55,7 @@
                             <x-alert type="warning">{{ session('warning') }}</x-alert>
                         @endif
 
-                        <form method="post" action="{{ route('orders.store') }}" enctype="multipart/form-data">
+                        <form method="post" action="{{ route('orders.store') }}">
                             @csrf
 
 
@@ -155,25 +157,48 @@
                                 </div>
                                 @enderror
                             </div>
-                            @if(sizeof($categories) > 0)
+
+
+                            @if(sizeof($tags) > 0)
                                 <div class="form-group">
-                                    <label for="role"> Card Category </label>
+                                    <label for="role"> Tag </label>
                                     <select id="role"
-                                            class="form-control form-control-lg select2 @error('role') is-invalid @enderror"
-                                            name="category" data-toggle="select2">
-                                        @foreach($categories as $category)
-                                            <option value="{{ $category->type }}"
-                                                    @if( in_array($category->type, $non_available_categories_array ) ) disabled @endif>{{ $category->type }}</option>
+                                            class="form-control form-control-lg select2 @error('tag') is-invalid @enderror"
+                                            name="tag" data-toggle="select2">
+                                        <option value="0">Select</option>
+                                        @foreach($tags as $tag)
+                                            <option value="{{ $tag->id }}">{{ $tag->title }}</option>
                                         @endforeach
 
                                     </select>
-                                    @error('role')
+                                    @error('tag')
                                     <div class="invalid-feedback">
                                         {{ $message }}
                                     </div>
                                     @enderror
                                 </div>
-                            @endif
+
+                        @endif
+
+{{--                            @if(sizeof($categories) > 0)--}}
+{{--                                <div class="form-group">--}}
+{{--                                    <label for="role"> Card Category </label>--}}
+{{--                                    <select id="role"--}}
+{{--                                            class="form-control form-control-lg select2 @error('role') is-invalid @enderror"--}}
+{{--                                            name="category" data-toggle="select2">--}}
+{{--                                        @foreach($categories as $category)--}}
+{{--                                            <option value="{{ $category->type }}"--}}
+{{--                                                    @if( in_array($category->type, $non_available_categories_array ) ) disabled @endif>{{ $category->type }}</option>--}}
+{{--                                        @endforeach--}}
+
+{{--                                    </select>--}}
+{{--                                    @error('role')--}}
+{{--                                    <div class="invalid-feedback">--}}
+{{--                                        {{ $message }}--}}
+{{--                                    </div>--}}
+{{--                                    @enderror--}}
+{{--                                </div>--}}
+{{--                            @endif--}}
 
 
                             <div class="form-group">

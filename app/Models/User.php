@@ -40,6 +40,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Order::class);
     }
 
+    public function tags()
+    {
+        return $this->hasMany(Tag::class)
+            ->where('user_id', auth()->id());
+    }
+
     public function messages()
     {
 

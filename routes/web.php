@@ -17,6 +17,7 @@ use App\Http\Controllers\PostMessageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\TagController;
 use App\Http\Controllers\UsersController;
 use App\Models\Order;
 use App\Models\PostMessage;
@@ -131,6 +132,12 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::post('settings', [SettingsController::class, 'update_settings'])->name('settings.update');
+
+    Route::group([], function () {
+
+        Route::resource('tags', TagController::class);
+    });
+
 
     Route::group(
         ['middleware' => 'admin',

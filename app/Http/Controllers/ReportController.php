@@ -88,6 +88,7 @@ class ReportController extends Controller
             $orders = $orders->where('user_id', $request_user);
         }
 
+
         if ($request_sub_user != 'null' && $request_sub_user != '' & $request_sub_user != 0) {
             $orders = $orders->where('user_id', $request_sub_user);
         } else {

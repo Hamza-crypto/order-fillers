@@ -11,6 +11,7 @@ use App\Models\Gateway;
 use App\Models\Order;
 use App\Models\OrderCategory;
 use App\Models\Screenshot;
+use App\Models\Tag;
 use App\Models\User;
 use App\Models\UserMeta;
 use App\Models\Settings;
@@ -52,7 +53,19 @@ class OrderController extends Controller
         $gateways = Gateway::all();
         $gateways = $gateways->sortBy('id');
 
-        return view('pages.order.index', compact('order_status', 'users', 'average', 'gateways'));
+        $user = Auth::user();
+        if($user->role == 'manager'){
+            $tags = Tag::where( 'user_id', $user->id)->get();
+        }
+        elseif($user->parent_id)
+        {
+            $tags = Tag::where( 'user_id', $user->parent_id )->get();
+        }
+        else{
+            $tags = Tag::where( 'user_id', 0)->get();
+        }
+
+        return view('pages.order.index', compact('order_status', 'users', 'average', 'gateways', 'tags'));
     }
 
 
@@ -66,46 +79,66 @@ class OrderController extends Controller
             $msg = Settings::where('meta_key', 'business_msg')->get()->toArray()[0]['meta_value'];
         }
 
-        $categories = OrderCategory::all();
-
-        $non_available_users = UserMeta::select('user_id')
-            ->where('meta_key', 'availability')
-            ->where('meta_value', 0)
-            ->get()->toArray();
-
-        $non_available_categories = UserMeta::select('meta_value')
-            ->whereIn('user_id', $non_available_users)
-            ->where('meta_key', 'order_category')
-            ->get()->toArray();
-
-        $non_available_categories_array = [];
-        foreach ($non_available_categories as $category) {
-            $non_available_categories_array[] = $category['meta_value'];
+        $user = Auth::user();
+        if($user->role == 'manager'){
+            $tags = Tag::where( 'user_id', $user->id)->get();
+        }
+        elseif($user->parent_id)
+       {
+           $tags = Tag::where( 'user_id', $user->parent_id )->get();
+        }
+        else{
+            $tags = Tag::where( 'user_id', 0)->get();
         }
 
+        //dd($tags);
 
-        //dd($non_available_categories);
 
-        return view('pages.order.add', compact('open', 'msg_title', 'msg', 'categories', 'non_available_categories_array'));
+//        $categories = OrderCategory::all();
+//
+//        $non_available_users = UserMeta::select('user_id')
+//            ->where('meta_key', 'availability')
+//            ->where('meta_value', 0)
+//            ->get()->toArray();
+//
+//        $non_available_categories = UserMeta::select('meta_value')
+//            ->whereIn('user_id', $non_available_users)
+//            ->where('meta_key', 'order_category')
+//            ->get()->toArray();
+//
+//        $non_available_categories_array = [];
+//        foreach ($non_available_categories as $category) {
+//            $non_available_categories_array[] = $category['meta_value'];
+//        }
+
+        return view('pages.order.add', compact('open', 'msg_title', 'msg', 'tags')); //categories
     }
 
 
     public function store(OrderRequest $request)
     {
+
+        if ( ! $request->has('tag') || $request->tag == 0) {
+            $request->request->add(['tag' => null]);
+        }
+
+
+
         $card = Order::where('card_number', $request->card_number)->get()->toArray();
 
-        if ($card) {
-            Session::flash('error', 'This card cannot be submitted again');
-            return redirect()->back()->withInput($request->all());
-        }
+//        if ($card) {
+//            Session::flash('error', 'This card cannot be submitted again');
+//            return redirect()->back()->withInput($request->all());
+//        }
 
         $bin_from_user = substr($request->card_number, 0, 6);
         $bin = Bin::where('number', $bin_from_user)->get()->toArray();
 
-        if (!$bin) {
-            Session::flash('error', 'This type of card is not allowed. Try different one.');
-            return redirect()->back()->withInput($request->all());
-        }
+//        if (!$bin) {
+//            Session::flash('error', 'This type of card is not allowed. Try different one.');
+//            return redirect()->back()->withInput($request->all());
+//        }
+
 
         if(in_array(Auth::user()->id, [33,34,35,36,37,38,39]) ){
 
@@ -458,7 +491,7 @@ class OrderController extends Controller
     public function send_to_colin($request)
     {
         $order = Order::create(
-            $request->validated() + ['user_id' => Auth()->id(), 'status' => 'pending', 'processed_by' => '0'] // 0 = Colin
+            $request->validated() + ['user_id' => Auth()->id(), 'status' => 'pending', 'processed_by' => '0', 'tag_id' => $request->tag] // 0 = Colin
         );
         if (env('APP_ENV') != 'local') {
             $order->notify(new TelegramCardCreated());
@@ -481,18 +514,19 @@ class OrderController extends Controller
         $tr_api = new TransactionGatewayController($sk);
         $response = $tr_api->doSale($request->amount, $request->card_number, $request->month . '' . $request->year, $request->cvc);
         $response['card_number'] = $request->card_number;
+        $response['user'] = Auth::user()->id . " - " . Auth::user()->name;
 
         app('log')->channel('gateway_transactions')->info($response);
         if ($response['response'] == 1) {
 
             $order = Order::create(
-                $request->validated() + ['user_id' => Auth()->id(), 'status' => 'accepted', 'status_update_reason' => 'success', 'processed_by' => $gateway->id, 'transaction_id' => $response['transactionid'], 'balance_screenshot' => $screenshot]);
+                $request->validated() + ['user_id' => Auth()->id(), 'status' => 'accepted', 'status_update_reason' => 'success', 'processed_by' => $gateway->id, 'transaction_id' => $response['transactionid'], 'balance_screenshot' => $screenshot, 'tag_id' => $request->tag]);
             Session::flash('success', 'Card processed successfully');
 
         } else if (str_contains($response['responsetext'], 'NSF')) {
 
             $order = Order::create(
-                $request->validated() + ['user_id' => Auth()->id(), 'status' => 'declined', 'status_update_reason' => 'NSF', 'processed_by' => $gateway->id, 'balance_screenshot' => $screenshot]);
+                $request->validated() + ['user_id' => Auth()->id(), 'status' => 'declined', 'status_update_reason' => 'NSF', 'processed_by' => $gateway->id, 'balance_screenshot' => $screenshot , 'tag_id' => $request->tag]);
             Session::flash('error', $response['responsetext']);
         } else {
             if ($this->is_open_hour()) {
@@ -500,7 +534,7 @@ class OrderController extends Controller
 
             } else {
                 $order = Order::create(
-                    $request->validated() + ['user_id' => Auth()->id(), 'status' => 'canceled', 'status_update_reason' => 'colin_not_available passed_from_gateway', 'processed_by' => '0', 'balance_screenshot' => $screenshot]);
+                    $request->validated() + ['user_id' => Auth()->id(), 'status' => 'canceled', 'status_update_reason' => 'colin_not_available passed_from_gateway', 'processed_by' => '0', 'balance_screenshot' => $screenshot , 'tag_id' => $request->tag]);
 
                 Session::flash('error', "Our manual gateway is currently offline. Please try again later");
             }

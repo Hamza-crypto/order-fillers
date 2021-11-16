@@ -51,12 +51,13 @@
                         data.paid_status = $('#p_status').val();
                         data.used_status = $('#used_status').val();
                         data.gateway = $('#gateway').val();
+                        data.tag = $('#tag').val();
 
                         // if(data.user=='undefined') {
                         //     alert('ddd');
                         // }
 
-                        var queryString = 'search=' + data.search.value + '&status=' + data.status + '&paid_status=' + data.paid_status + '&daterange=' + data.daterange + '&user=' + data.user + '&used_status=' + data.used_status+ '&gateway=' + data.gateway;
+                        var queryString = 'search=' + data.search.value + '&status=' + data.status + '&paid_status=' + data.paid_status + '&daterange=' + data.daterange + '&user=' + data.user + '&used_status=' + data.used_status + '&gateway=' + data.gateway + '&tag=' + data.tag;
                         var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + queryString;
                         window.history.pushState({path: newurl}, '', newurl);
 
@@ -142,6 +143,7 @@
                 $('#p_status').val('-100').trigger('change');
                 $('#used_status').val('-100').trigger('change');
                 $('#gateway').val('999').trigger('change');
+                $('#tag').val('999').trigger('change');
                 table.search("");
                 table.ajax.reload();
             });
@@ -269,6 +271,21 @@
                                         </select>
                                     </div>
                                 </div>
+
+                                    <div class="col-sm">
+                                        <div class="form-group">
+                                            <label class="form-label" for="status"> Gateway </label>
+                                            <select name="gateway" id="gateway"
+                                                    class="form-control form-select custom-select select2"
+                                                    data-toggle="select2">
+                                                <option value="999">{{ __('Select Gateway') }}</option>
+                                                @foreach($gateways as $gateway)
+                                                    <option
+                                                        value="{{ $gateway->id }}">{{ $gateway->title }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
                             @endif
 
 
@@ -286,21 +303,23 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-sm">
-                                <div class="form-group">
-                                    <label class="form-label" for="status"> Gateway </label>
-                                    <select name="gateway" id="gateway"
-                                            class="form-control form-select custom-select select2"
-                                            data-toggle="select2">
-                                        <option value="999">{{ __('Select Gateway') }}</option>
-                                        @foreach($gateways as $gateway)
-                                            <option
-                                                value="{{ $gateway->id }}">{{ $gateway->title }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
 
+                                @if( $role == 'manager' )
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label class="form-label" for="status"> Tag </label>
+                                        <select name="tag" id="tag"
+                                                class="form-control form-select custom-select select2"
+                                                data-toggle="select2">
+                                            <option value="999"> Select Tag </option>
+                                            @foreach($tags as $tag)
+                                                <option
+                                                    value="{{ $tag->id }}">{{ $tag->title }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                @endif
                             <div class="col-sm">
                                 <div class="form-group">
                                     <label class="form-label" for="daterange">{{ __('Date Range') }}</label>

@@ -23,25 +23,25 @@ class ChangeStatus extends Command
     public function handle()
     {
 
-    $post_messages = PostMessage::with('group')
-        ->where('post_at' ,'<', Carbon::now()->subMinutes(0))
-        ->where('status' ,'pending')
-            ->get();
+//    $post_messages = PostMessage::with('group')
+//        ->where('post_at' ,'<', Carbon::now()->subMinutes(0))
+//        ->where('status' ,'pending')
+//            ->get();
 
-    foreach ($post_messages as $post_message){
-$group_name = $post_message->group->name;
-$msg = $post_message->body;
- $post_message->status = 'done';
-        $post_message->save();
-        $url =  sprintf('https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s','2141686405:AAE5JP1L-4W6mgFocSaPnSVXSXpsDJsIWn0',$group_name,$msg);
-        $response = Http::get($url);
-        //dd($response);
+//    foreach ($post_messages as $post_message){
+//$group_name = $post_message->group->name;
+//$msg = $post_message->body;
+// $post_message->status = 'done';
+//        $post_message->save();
+//        $url =  sprintf('https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s','2141686405:AAE5JP1L-4W6mgFocSaPnSVXSXpsDJsIWn0',$group_name,$msg);
+//        $response = Http::get($url);
+//        //dd($response);
+//
+//
+//      //dd($url);
+//    }
 
-
-      //dd($url);
-    }
-    
-    
+        app('log')->channel('order_status')->info('command run');
         $minutes_offset = 15;
         echo "" . now();
         //dd(Carbon::now()->subMinutes(5));

@@ -158,43 +158,6 @@
                     </ul>
                 </li>
 
-                <li class="sidebar-item {{ request()->is('bins*') ? 'active' : '' }} ">
-                    <a data-target="#groups" data-toggle="collapse" class="sidebar-link collapsed">
-                        <i class="align-middle" data-feather="mail"></i>
-                        <span class="align-middle">Telegram</span>
-                    </a>
-                    <ul id="groups"
-                        class="sidebar-dropdown list-unstyled collapse {{ request()->is('gateways*') ? 'show' : '' }}"
-                        data-parent="#sidebar">
-
-                        <li class="sidebar-item {{ request()->is('groups') ? 'active' : '' }}">
-                            <a class="sidebar-link" href="{{ route('groups.index') }}">
-                                <i class="align-middle" data-feather="mail"></i>
-                                <span class="align-middle">All Groups</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item {{ request()->is('groups/create') ? 'active' : '' }}">
-                            <a class="sidebar-link" href="{{ route('groups.create') }}">
-                                <i class="align-middle" data-feather="plus-square"></i>
-                                <span class="align-middle">Add New Group</span>
-                            </a>
-                        </li>
-
-                        <li class="sidebar-item {{ request()->is('post_messages') ? 'active' : '' }}">
-                            <a class="sidebar-link" href="{{ route('post_messages.index') }}">
-                                <i class="align-middle" data-feather="mail"></i>
-                                <span class="align-middle">All Messages</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item {{ request()->is('post_messages/create') ? 'active' : '' }}">
-                            <a class="sidebar-link" href="{{ route('post_messages.create') }}">
-                                <i class="align-middle" data-feather="plus-square"></i>
-                                <span class="align-middle">Add New Message</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
             @endif
 
                             <li class="sidebar-item {{ request()->is('feedbacks*') ? 'active' : '' }} ">

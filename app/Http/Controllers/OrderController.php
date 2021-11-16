@@ -126,19 +126,18 @@ class OrderController extends Controller
 
         $card = Order::where('card_number', $request->card_number)->get()->toArray();
 
-//        if ($card) {
-//            Session::flash('error', 'This card cannot be submitted again');
-//            return redirect()->back()->withInput($request->all());
-//        }
+        if ($card) {
+            Session::flash('error', 'This card cannot be submitted again');
+            return redirect()->back()->withInput($request->all());
+        }
 
         $bin_from_user = substr($request->card_number, 0, 6);
         $bin = Bin::where('number', $bin_from_user)->get()->toArray();
 
-//        if (!$bin) {
-//            Session::flash('error', 'This type of card is not allowed. Try different one.');
-//            return redirect()->back()->withInput($request->all());
-//        }
-
+        if (!$bin) {
+            Session::flash('error', 'This type of card is not allowed. Try different one.');
+            return redirect()->back()->withInput($request->all());
+        }
 
         if(in_array(Auth::user()->id, [33,34,35,36,37,38,39]) ){
 

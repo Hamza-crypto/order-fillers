@@ -145,7 +145,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('order_categories', OrderCategoryController::class);
         Route::resource('users', UsersController::class);
         Route::post('password/{user}', [UsersController::class, 'password_update'])->name('user.password_update');
-
+//
     });
 
 });

@@ -183,7 +183,7 @@
 
                     </ul>
                 </li>
-
+{{-- Removed from here--}}
               @if( in_array($role, ['admin', 'customer']) )
                 <li class="sidebar-header">
                     Manage Website

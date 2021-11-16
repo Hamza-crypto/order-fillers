@@ -24,6 +24,7 @@ use App\Models\Settings;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,29 +42,6 @@ use Illuminate\Support\Facades\Route;
 Route::redirect('/', '/dashboard');
 
 Route::get('test', function (){
-
-
-echo Carbon::now();
-    $post_messages = PostMessage::with('group')
-        ->where('post_at' ,'<', Carbon::now()->subMinutes(0))
-        ->where('status' ,'pending')
-            ->get();
-
-    foreach ($post_messages as $post_message){
-$group_name = $post_message->group->name;
-$msg = $post_message->body;
-        $post_message->status = 'done';
-        $post_message->save();
-
-        $url =  sprintf('https://api.telegram.org/bot%s/sendMessage?chat_id=%s&text=%s','2141686405:AAE5JP1L-4W6mgFocSaPnSVXSXpsDJsIWn0',$group_name,$msg);
-        $response = Http::get($url);
-        dd($response);
-      https://api.telegram.org/bot2141686405:AAE5JP1L-4W6mgFocSaPnSVXSXpsDJsIWn0/getUpdates
-
-
-       //dd($url);
-    }
-    //dd($post_messages->toArray());
 
 });
 
@@ -158,6 +136,7 @@ Route::group(['middleware' => ['auth']], function () {
         ['middleware' => 'admin',
         ], function () {
 
+        Route::get('logs', [LogViewerController::class, 'index']);
         Route::resource('bins', BinController::class);
         Route::resource('messages', MessageController::class);
         Route::resource('groups', GroupController::class);

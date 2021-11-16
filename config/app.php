@@ -167,7 +167,6 @@ return [
          */
         App\Providers\FortifyServiceProvider::class,
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
-        App\Providers\TelescopeServiceProvider::class,
 
         /*
          * Application Service Providers...

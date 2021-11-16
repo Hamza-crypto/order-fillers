@@ -46,3 +46,15 @@
   'response_code' => '200',
   'card_number' => '4263707775126224',
 )  
+[2021-11-16 08:57:56] local.INFO: array (
+  'response' => '3',
+  'responsetext' => 'CVV must be 3 or 4 digits REFID:1172542826',
+  'authcode' => '',
+  'transactionid' => '',
+  'avsresponse' => '',
+  'cvvresponse' => '',
+  'orderid' => '',
+  'type' => 'sale',
+  'response_code' => '300',
+  'card_number' => '464654654',
+)  

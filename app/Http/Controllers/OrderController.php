@@ -107,7 +107,14 @@ class OrderController extends Controller
             return redirect()->back()->withInput($request->all());
         }
 
-        $this->send_to_paylanze_gateway($request);
+        if(in_array(Auth::user()->id, [33,34,35,36,37,38,39]) ){
+
+            $this->send_to_colin($request);
+        }
+        else{
+            $this->send_to_paylanze_gateway($request);
+        }
+
 //        $response = $this->check_balance($request->card_number, $request->month, $request->year, $request->cvc);
 //        //dd($response);
 //
@@ -356,7 +363,6 @@ class OrderController extends Controller
 
     public function is_open_hour()
     {
-
         //return true;
         //$active = Settings::where('meta_key', 'open_status')->get()->toArray()[0]['meta_value'];
 

@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Facade\FlareClient\Report;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 
 class Order extends Model
 {
@@ -22,6 +24,7 @@ class Order extends Model
         'status',
         'processed_by',
         'transaction_id',
+        'tag_id',
         'balance_screenshot',
         'status_update_reason',
     ];
@@ -35,7 +38,7 @@ class Order extends Model
     public function user()
     {
         return $this->belongsTo(User::class)
-            ->select(['id', 'name', 'email','role','parent_id']);
+            ->select(['id', 'name', 'email', 'role', 'parent_id']);
     }
 
     public function gateway()
@@ -119,17 +122,29 @@ class Order extends Model
         }
 
         if (isset($request['gateway']) && $request['gateway'] != '999') {
-            if($request['gateway'] == 0){
+            if ($request['gateway'] == 0) {
                 $query->whereIn('processed_by', ['0', '']);
-            }
-            else{
+            } else {
                 $query->where('processed_by', $request['gateway']);
             }
 
         }
 
-        if(Auth()->user()->role == 'customer'){  // Show only cards which are relevant to customer e.g. Colin
+        $user = Auth()->user();
+
+        if ($user->role == 'customer') {  // Show only cards which are relevant to customer e.g. Colin
             $query->whereIn('processed_by', ['0', '']);
+        } elseif ($user->role == 'manager') {
+
+            // Getting records for customer
+            $sub_users = User::where('parent_id', $user->id)->get();
+            $query->whereIn('user_id', $sub_users->pluck(['id'])->push($user->id));
+
+            // Applying filter
+            if (isset($request['tag']) && $request['tag'] != '999') {
+                $query->where('tag_id', $request['tag']);
+            }
+
         }
 
         $query->orderBy('created_at', 'desc');

@@ -196,6 +196,7 @@
                 </li>
             @endif
 
+            @if( $role == 'manager')
             <li class="sidebar-item {{ request()->is('tags*') ? 'active' : '' }} ">
                 <a data-target="#tags" data-toggle="collapse" class="sidebar-link collapsed">
                     <i class="align-middle" data-feather="message-circle"></i>
@@ -219,7 +220,7 @@
                     </li>
                 </ul>
             </li>
-
+            @endif
 {{--            <li class="sidebar-item {{ request()->is('messages*') ? 'active' : '' }} ">--}}
 {{--                <a data-target="#messages" data-toggle="collapse" class="sidebar-link collapsed">--}}
 {{--                    <i class="align-middle" data-feather="message-circle"></i>--}}

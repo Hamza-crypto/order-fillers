@@ -134,7 +134,7 @@ return [
     |
     */
 
-    'providers' => [
+    'providers' => array(
 
         /*
          * Laravel Framework Service Providers...
@@ -167,6 +167,8 @@ return [
          */
         App\Providers\FortifyServiceProvider::class,
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
+        Laravel\Telescope\TelescopeServiceProvider::class,
+        App\Providers\TelescopeServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -175,7 +177,7 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-    ],
+    ),
 
     /*
     |--------------------------------------------------------------------------

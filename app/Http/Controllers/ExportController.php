@@ -13,6 +13,7 @@ class ExportController extends Controller {
 		$user = Auth()->user();
 		$role = Auth()->user()->role;
 
+        //dd($request->all());
 		if ($role == 'user') {
 			$orders = Order::filters($request->all())
 				->where('user_id', $user->id)
@@ -22,8 +23,6 @@ class ExportController extends Controller {
 				->get();
 		}
 
-
-//dd($orders->toArray());
 		$data = [];
 		foreach ($orders as $order) {
 			if (strlen($order->year) == 2) {
@@ -45,20 +44,38 @@ class ExportController extends Controller {
 			} elseif ($first_index == 5) {
 				$id = 380;
 			}
+            else {
+                $id = 000;
+            }
 
-			$data[] = [
-				'Card id' => $id,
-				'User' => $order->user->name,
-                'Email' => $order->user->email,
-				'Card number' => sprintf('="%s"', $order->card_number),
-				'Card Pin' => sprintf('="%s"', $order->cvc),
-				'Expiration date' => sprintf('="%s"', $year . "-" . $month . "-01"),
-				'Balance' => $order->amount,
-				'Status' => $order->status,
-				'Paid Status' => $order->paid_status,
-				'Used Status' => $order->used_status,
-				'Creation Date' => $order->created_at->toString(),
-			];
+            if ($role == 'admin'){
+                $data[] = [
+                    'Card id' => $id,
+                    'User' => $order->user->name,
+                    'Email' => $order->user->email,
+                    'Card number' => sprintf('="%s"', $order->card_number),
+                    'Card Pin' => sprintf('="%s"', $order->cvc),
+                    'Expiration date' => sprintf('="%s"', $year . "-" . $month . "-01"),
+                    'Balance' => $order->amount,
+                    'Status' => $order->status,
+                    'Paid Status' => $order->paid_status,
+                    'Used Status' => $order->used_status,
+                    'Creation Date' => $order->created_at->toString(),
+                ];
+            }
+            else{
+                $data[] = [
+                    'User' => $order->user->name,
+                    'Email' => $order->user->email,
+                    'Card number' => sprintf('="%s"', $order->card_number),
+                    'Card Pin' => sprintf('="%s"', $order->cvc),
+                    'Expiration date' => sprintf('="%s"', $year . "-" . $month . "-01"),
+                    'Balance' => $order->amount,
+                    'Status' => $order->status,
+                    'Creation Date' => $order->created_at->toString(),
+                ];
+            }
+
 		}
 
 		$format = 'd-m';
@@ -71,11 +88,14 @@ class ExportController extends Controller {
 		//return (new FastExcel($data))->withoutHeaders()->download($filename);
 		return (new FastExcel($data))->download($filename);
 	}
+
 	public function export_with_cvc(Request $request) {
 		$user = Auth()->user();
-		$role = Auth()->user()->role;
+		$role = $user->role;
+
 
 		if ($role == 'user') {
+//            dd($request->all());
 			$orders = Order::filters($request->all())
 				->where('user_id', $user->id)
 				->get();
@@ -83,6 +103,10 @@ class ExportController extends Controller {
 			$orders = Order::filters($request->all())
 				->get();
 		}
+
+
+        //dd($orders->toArray());
+
 
 		$data = [];
 		foreach ($orders as $order) {
@@ -105,6 +129,9 @@ class ExportController extends Controller {
 			} elseif ($first_index == 5) {
 				$id = 380;
 			}
+            else{
+                $id = 000;
+            }
 
 			$data[] = [
 				'Card id' => $id,

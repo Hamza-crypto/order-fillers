@@ -236,7 +236,7 @@
                                 </div>
                             @endif
 
-                            @if( $role == 'admin' || $role == 'user' )
+                            @if( $role == 'admin' || $role == 'user' || $role == 'manager' )
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <label class="form-label" for="p_status">{{ __('Payment Status') }}</label>
@@ -256,7 +256,7 @@
                                     </div>
                                 </div>
                             @endif
-                            @if( $role == 'admin' )
+                            @if( $role == 'admin' || $role == 'manager')
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <label class="form-label" for="status">{{ __('User') }}</label>
@@ -335,21 +335,19 @@
                                         class="btn btn-sm btn-primary apply-dt-filters mt-2">{{ __('Apply') }}</button>
                                 <button type="button"
                                         class="btn btn-sm btn-secondary clear-dt-filters mt-2">{{ __('Clear') }}</button>
+
                                 <button type="button" class="btn btn-sm btn-secondary mt-2"
-                                        onclick="get_query_params()"
-                                >{{ 'Export' }}</button>
+                                        onclick="get_query_params2()"
+                                >{{ 'Export ' }}</button>
 
 
                                 @if( $role == 'admin')
 
-                                    <button type="button" class="btn btn-sm btn-secondary mt-2"
-                                            onclick="get_query_params2()"
-                                    >{{ 'Full Export ' }}</button>
+
                                     <button type="button"
                                             id="paidp" class="paid-unpaid btn btn-sm btn-success mt-2"
                                     >{{ 'Mark as Paid' }}</button>
-                                    <button type="button"
-                                            id="unpaidu" class="paid-unpaid btn btn-sm btn-danger mt-2"
+                                    <button type="button" id="unpaidu" class="paid-unpaid btn btn-sm btn-danger mt-2"
                                     >{{ 'Mark as Unpaid' }}</button>
                                 @endif
 

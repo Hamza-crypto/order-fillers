@@ -14,7 +14,7 @@ class AddTagIdToOrdersTable extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->text('tag_id')->nullable()->after('transaction_id');
+            //$table->text('tag_id')->nullable()->after('transaction_id');
         });
     }
 

@@ -56,6 +56,9 @@ class OrderController extends Controller
         $user = Auth::user();
         if($user->role == 'manager'){
             $tags = Tag::where( 'user_id', $user->id)->get();
+
+            $users = User::where('parent_id', $user->id)->get(); //For Drop-down menu
+
         }
         elseif($user->parent_id)
         {

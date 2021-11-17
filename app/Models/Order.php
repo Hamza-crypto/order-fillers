@@ -96,10 +96,7 @@ class Order extends Model
 
     public function scopeFilters($query, $request)
     {
-
-        //$query->whereIn('processed_by', ['', '0']); // 0 = Colin, '' = those cards which have been processed before implementing automatic gateway
-
-        if (isset($request['paid_status']) && $request['paid_status'] != -100) {
+        if (isset($request['paid_status']) && $request['paid_status' ] != -100 && $request['paid_status'] != 'undefined') {
             $query->where('paid_status', $request['paid_status']);
         }
 
@@ -117,11 +114,11 @@ class Order extends Model
             $query->where('user_id', '=', $request['user']);
         }
 
-        if (isset($request['used_status']) && $request['used_status'] != -100) {
+        if (isset($request['used_status']) && $request['used_status'] != -100 && $request['used_status'] != 'undefined') {
             $query->where('used_status', $request['used_status']);
         }
 
-        if (isset($request['gateway']) && $request['gateway'] != '999') {
+        if (isset($request['gateway']) && $request['gateway'] != '999' && $request['gateway'] != 'undefined') {
             if ($request['gateway'] == 0) {
                 $query->whereIn('processed_by', ['0', '']);
             } else {
@@ -141,7 +138,7 @@ class Order extends Model
             $query->whereIn('user_id', $sub_users->pluck(['id'])->push($user->id));
 
             // Applying filter
-            if (isset($request['tag']) && $request['tag'] != '999') {
+            if (isset($request['tag']) && $request['tag'] != '999' && $request['tag'] != 'undefined') {
                 $query->where('tag_id', $request['tag']);
             }
 

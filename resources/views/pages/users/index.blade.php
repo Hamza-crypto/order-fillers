@@ -89,7 +89,7 @@
 
                                 <td>
                                     @if (isset($user->parent_id))
-                                        {{ $users->where('id', $user->parent_id)->first()->name }}
+                                        {{ $users->where('id', $user->parent_id)->first()->name ?? '----' }}
                                     @endif
 
                                 </td>

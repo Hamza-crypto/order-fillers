@@ -126,7 +126,6 @@ class OrderController extends Controller
         }
 
 
-
         $card = Order::where('card_number', $request->card_number)->get()->toArray();
 
         if ($card) {

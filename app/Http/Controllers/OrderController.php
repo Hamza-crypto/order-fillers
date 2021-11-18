@@ -303,11 +303,11 @@ class OrderController extends Controller
             }
         }
 
-        if (env('APP_ENV') != 'local') {
-            if (Auth()->user()->id != 8) {
-                $this->send_transaction_to_zoho($order);
-            }
-        }
+//        if (env('APP_ENV') != 'local') {
+//            if (Auth()->user()->id != 8) {
+//                $this->send_transaction_to_zoho($order);
+//            }
+//        }
 
 
         Session::flash('success', __('Status updated successfully'));

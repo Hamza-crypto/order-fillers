@@ -141,7 +141,7 @@ class OrderController extends Controller
             return redirect()->back()->withInput($request->all());
         }
 
-        if(in_array(Auth::user()->id, [33,34,35,36,37,38,39]) ){
+        if(in_array(Auth::user()->id, [17,18,33,34,35,36,37,38,39]) ){
 
             $this->send_to_colin($request);
         }

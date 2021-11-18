@@ -79,14 +79,14 @@
                         Wallet info
                     </a>
 
-                    <a
-                        class="list-group-item list-group-item-action @if(session('status') == 'password-updated') active @endif"
-                        data-toggle="list"
-                        href="#password"
-                        role="tab"
-                    >
-                        Change Password
-                    </a>
+{{--                    <a--}}
+{{--                        class="list-group-item list-group-item-action @if(session('status') == 'password-updated') active @endif"--}}
+{{--                        data-toggle="list"--}}
+{{--                        href="#password"--}}
+{{--                        role="tab"--}}
+{{--                    >--}}
+{{--                        Change Password--}}
+{{--                    </a>--}}
 
                     <a
                         class="list-group-item list-group-item-action @if($tab == 'paxful2') active @endif"
@@ -103,7 +103,7 @@
             <div class="tab-content">
                 @include('pages.profile._inc.account')
                 @include('pages.profile._inc.usdt_btc')
-                @include('pages.profile._inc.password')
+{{--                @include('pages.profile._inc.password')--}}
                 @include('pages.profile._inc.paxful_api')
             </div>
         </div>

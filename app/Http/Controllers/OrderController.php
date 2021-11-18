@@ -54,18 +54,15 @@ class OrderController extends Controller
         $gateways = $gateways->sortBy('id');
 
         $user = Auth::user();
-        if($user->role == 'manager'){
-            $tags = Tag::where( 'user_id', $user->id)->get();
+        if ($user->role == 'manager') {
+            $tags = Tag::where('user_id', $user->id)->get();
 
             $users = User::where('parent_id', $user->id)->get(); //For Drop-down menu
 
-        }
-        elseif($user->parent_id)
-        {
-            $tags = Tag::where( 'user_id', $user->parent_id )->get();
-        }
-        else{
-            $tags = Tag::where( 'user_id', 0)->get();
+        } elseif ($user->parent_id) {
+            $tags = Tag::where('user_id', $user->parent_id)->get();
+        } else {
+            $tags = Tag::where('user_id', 0)->get();
         }
 
         return view('pages.order.index', compact('order_status', 'users', 'average', 'gateways', 'tags'));
@@ -83,15 +80,12 @@ class OrderController extends Controller
         }
 
         $user = Auth::user();
-        if($user->role == 'manager'){
-            $tags = Tag::where( 'user_id', $user->id)->get();
-        }
-        elseif($user->parent_id)
-       {
-           $tags = Tag::where( 'user_id', $user->parent_id )->get();
-        }
-        else{
-            $tags = Tag::where( 'user_id', 0)->get();
+        if ($user->role == 'manager') {
+            $tags = Tag::where('user_id', $user->id)->get();
+        } elseif ($user->parent_id) {
+            $tags = Tag::where('user_id', $user->parent_id)->get();
+        } else {
+            $tags = Tag::where('user_id', 0)->get();
         }
 
         //dd($tags);
@@ -121,7 +115,7 @@ class OrderController extends Controller
     public function store(OrderRequest $request)
     {
 
-        if ( ! $request->has('tag') || $request->tag == 0) {
+        if (!$request->has('tag') || $request->tag == 0) {
             $request->request->add(['tag' => null]);
         }
 
@@ -129,8 +123,14 @@ class OrderController extends Controller
         $card = Order::where('card_number', $request->card_number)->get()->toArray();
 
         if ($card) {
-            Session::flash('error', 'This card cannot be submitted again');
-            return redirect()->back()->withInput($request->all());
+            if (in_array(Auth::user()->id, [17,18]) && $card[0]['status'] == 'declined') {
+                $this->send_to_colin($request);
+                return redirect()->back()->withInput($request->all());
+            } else {
+                Session::flash('error', 'This card cannot be submitted again');
+                return redirect()->back()->withInput($request->all());
+            }
+
         }
 
         $bin_from_user = substr($request->card_number, 0, 6);
@@ -141,11 +141,10 @@ class OrderController extends Controller
             return redirect()->back()->withInput($request->all());
         }
 
-        if(in_array(Auth::user()->id, [17,18,33,34,35,36,37,38,39]) ){
+        if (in_array(Auth::user()->id, [17, 18, 33, 34, 35, 36, 37, 38, 39])) {
 
             $this->send_to_colin($request);
-        }
-        else{
+        } else {
             $this->send_to_paylanze_gateway($request);
         }
 
@@ -511,11 +510,17 @@ class OrderController extends Controller
         }
 
         $sk = '';
-        if($gateway->title == 'DAsim1'){ $sk = env('GATEWAY_1');}
-        elseif($gateway->title == 'DAsim2'){ $sk = env('GATEWAY_2');}
-        elseif($gateway->title == 'DAsim3'){ $sk = env('GATEWAY_3');}
-        elseif($gateway->title == 'DAsim4'){ $sk = env('GATEWAY_4');}
-        elseif($gateway->title == 'DAsim5'){ $sk = env('GATEWAY_5');}
+        if ($gateway->title == 'DAsim1') {
+            $sk = env('GATEWAY_1');
+        } elseif ($gateway->title == 'DAsim2') {
+            $sk = env('GATEWAY_2');
+        } elseif ($gateway->title == 'DAsim3') {
+            $sk = env('GATEWAY_3');
+        } elseif ($gateway->title == 'DAsim4') {
+            $sk = env('GATEWAY_4');
+        } elseif ($gateway->title == 'DAsim5') {
+            $sk = env('GATEWAY_5');
+        }
         //$sk = $gateway->api_key;
 
         $tr_api = new TransactionGatewayController($sk);
@@ -533,7 +538,7 @@ class OrderController extends Controller
         } else if (str_contains($response['responsetext'], 'NSF')) {
 
             $order = Order::create(
-                $request->validated() + ['user_id' => Auth()->id(), 'status' => 'declined', 'status_update_reason' => 'NSF', 'processed_by' => $gateway->id, 'balance_screenshot' => $screenshot , 'tag_id' => $request->tag]);
+                $request->validated() + ['user_id' => Auth()->id(), 'status' => 'declined', 'status_update_reason' => 'NSF', 'processed_by' => $gateway->id, 'balance_screenshot' => $screenshot, 'tag_id' => $request->tag]);
             Session::flash('error', $response['responsetext']);
         } else {
             if ($this->is_open_hour()) {
@@ -541,7 +546,7 @@ class OrderController extends Controller
 
             } else {
                 $order = Order::create(
-                    $request->validated() + ['user_id' => Auth()->id(), 'status' => 'canceled', 'status_update_reason' => 'colin_not_available passed_from_gateway', 'processed_by' => '0', 'balance_screenshot' => $screenshot , 'tag_id' => $request->tag]);
+                    $request->validated() + ['user_id' => Auth()->id(), 'status' => 'canceled', 'status_update_reason' => 'colin_not_available passed_from_gateway', 'processed_by' => '0', 'balance_screenshot' => $screenshot, 'tag_id' => $request->tag]);
 
                 Session::flash('error', "Our manual gateway is currently offline. Please try again later");
             }

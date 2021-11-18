@@ -511,11 +511,11 @@ class OrderController extends Controller
         }
 
         $sk = '';
-        if($gateway->title == 'Gateway 1'){ $sk = env('GATEWAY_1');}
-        elseif($gateway->title == 'Gateway 2'){ $sk = env('GATEWAY_2');}
-        elseif($gateway->title == 'Gateway 3'){ $sk = env('GATEWAY_3');}
-        elseif($gateway->title == 'Gateway 4'){ $sk = env('GATEWAY_4');}
-        elseif($gateway->title == 'Gateway 5'){ $sk = env('GATEWAY_5');}
+        if($gateway->title == 'DAsim1'){ $sk = env('GATEWAY_1');}
+        elseif($gateway->title == 'DAsim2'){ $sk = env('GATEWAY_2');}
+        elseif($gateway->title == 'DAsim3'){ $sk = env('GATEWAY_3');}
+        elseif($gateway->title == 'DAsim4'){ $sk = env('GATEWAY_4');}
+        elseif($gateway->title == 'DAsim5'){ $sk = env('GATEWAY_5');}
         //$sk = $gateway->api_key;
 
         $tr_api = new TransactionGatewayController($sk);

@@ -123,7 +123,7 @@ class OrderController extends Controller
         $card = Order::where('card_number', $request->card_number)->get()->toArray();
 
         if ($card) {
-            if (in_array(Auth::user()->id, [17,18]) && $card[0]['status'] == 'declined' || $card[0]['status'] == 'canceled') {
+            if (in_array(Auth::user()->id, [17,18]) && $card[0]['status'] != 'pending') {
                 $this->send_to_colin($request);
                 return redirect()->back()->withInput($request->all());
             } else {

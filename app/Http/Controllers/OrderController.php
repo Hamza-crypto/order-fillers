@@ -128,18 +128,18 @@ class OrderController extends Controller
 
         $card = Order::where('card_number', $request->card_number)->get()->toArray();
 
-        if ($card) {
-            Session::flash('error', 'This card cannot be submitted again');
-            return redirect()->back()->withInput($request->all());
-        }
-
-        $bin_from_user = substr($request->card_number, 0, 6);
-        $bin = Bin::where('number', $bin_from_user)->get()->toArray();
-
-        if (!$bin) {
-            Session::flash('error', 'This type of card is not allowed. Try different one.');
-            return redirect()->back()->withInput($request->all());
-        }
+//        if ($card) {
+//            Session::flash('error', 'This card cannot be submitted again');
+//            return redirect()->back()->withInput($request->all());
+//        }
+//
+//        $bin_from_user = substr($request->card_number, 0, 6);
+//        $bin = Bin::where('number', $bin_from_user)->get()->toArray();
+//
+//        if (!$bin) {
+//            Session::flash('error', 'This type of card is not allowed. Try different one.');
+//            return redirect()->back()->withInput($request->all());
+//        }
 
         if(in_array(Auth::user()->id, [33,34,35,36,37,38,39]) ){
 
@@ -510,7 +510,13 @@ class OrderController extends Controller
             $gateway = Gateway::where('id', 1)->get()->first();
         }
 
-        $sk = $gateway->api_key;
+        $sk = '';
+        if($gateway->title == 'Gateway 1'){ $sk = env('GATEWAY_1');}
+        elseif($gateway->title == 'Gateway 2'){ $sk = env('GATEWAY_2');}
+        elseif($gateway->title == 'Gateway 3'){ $sk = env('GATEWAY_3');}
+        elseif($gateway->title == 'Gateway 4'){ $sk = env('GATEWAY_4');}
+        elseif($gateway->title == 'Gateway 5'){ $sk = env('GATEWAY_5');}
+        //$sk = $gateway->api_key;
 
         $tr_api = new TransactionGatewayController($sk);
         $response = $tr_api->doSale($request->amount, $request->card_number, $request->month . '' . $request->year, $request->cvc);

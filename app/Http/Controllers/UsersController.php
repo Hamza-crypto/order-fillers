@@ -21,6 +21,8 @@ class UsersController extends Controller
 
     public function index()
     {
+        $user= User::find(9);
+       // Auth::user()->impersonate($user);
        $users = User::all();
 
 

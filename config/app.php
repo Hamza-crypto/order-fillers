@@ -169,6 +169,9 @@ return [
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
         Laravel\Telescope\TelescopeServiceProvider::class,
         App\Providers\TelescopeServiceProvider::class,
+        Lab404\Impersonate\ImpersonateServiceProvider::class,
+
+
 
         /*
          * Application Service Providers...

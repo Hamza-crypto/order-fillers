@@ -159,7 +159,7 @@ class OrderController extends Controller
 
             } else {
                 $order = Order::create(
-                    $request->validated() + ['user_id' => Auth()->id(), 'status' => 'canceled', 'status_update_reason' => 'colin_not_available passed_from_gateway', 'processed_by' => '0', 'balance_screenshot' => $screenshot, 'tag_id' => $request->tag]);
+                    $request->validated() + ['user_id' => Auth()->id(), 'status' => 'canceled', 'status_update_reason' => 'colin_not_available passed_from_gateway', 'processed_by' => '0', 'tag_id' => $request->tag]);
 
                 Session::flash('error', "Our manual gateway is currently offline. Please try again later");
             }

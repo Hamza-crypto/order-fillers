@@ -145,8 +145,6 @@
                                     class="form-control form-control-lg @error('amount') is-invalid @enderror"
                                     type="number"
                                     name="amount"
-                                    min="0.01"
-                                    max="500"
                                     step="0.01"
                                     placeholder="Enter amount"
                                     value="{{ old('amount' )}}"

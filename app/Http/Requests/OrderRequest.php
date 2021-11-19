@@ -25,7 +25,7 @@ class OrderRequest extends FormRequest
                 'month' => 'required|max:2',
                 'year' => 'required|max:2',
                 'cvc' => 'required|max:4',
-                'amount' => 'required|numeric',
+                'amount' => 'required|numeric|gt:0|lte:500',
         ];
     }
 }

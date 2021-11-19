@@ -98,14 +98,16 @@
 
                                 <td data-sort="{{ strtotime($user->created_at) }}">{{ $user->created_at->diffForHumans() }}</td>
                                 <td class="table-action">
+
+
+
+
                                     <a href="{{ route('users.edit', $user->id) }}" class="btn" style="display: inline">
                                         <i class="fa fa-edit text-info"></i>
                                     </a>
 
 
                                     @if (auth()->user()->id != $user->id)
-
-
                                         <form method="post" action="{{ route('users.destroy', $user->id) }}"
                                               onsubmit="return confirmSubmission(this, 'Are you sure you want to delete user ' + '{{ "$user->name"  }}')"
                                               style="display: inline">
@@ -115,9 +117,19 @@
                                             <button class="btn text-danger"
                                                     href="{{ route('users.destroy', $user->id) }}">
                                                 <i class="fa fa-trash"></i>
+
                                             </button>
                                         </form>
-                                    @endif
+
+                                            @canImpersonate($guard = null)
+                                            <a href="{{ route('impersonate', $user->id) }}" class="btn" style="display: inline">
+                                                <i class="fa fa-user-cog"></i>
+                                            </a>
+                                            @endCanImpersonate
+                                        @endif
+
+
+
                                 </td>
                             </tr>
                         @endforeach

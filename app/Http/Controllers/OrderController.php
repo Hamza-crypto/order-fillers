@@ -80,14 +80,14 @@ class OrderController extends Controller
         }
 
         $user = Auth::user();
-        $tags = $user->tags;
-//        if ($user->role == 'manager') {
-//            $tags = Tag::where('user_id', $user->id)->get();
-//        } elseif ($user->parent_id) {
-//            $tags = Tag::where('user_id', $user->parent_id)->get();
-//        } else {
-//            $tags = Tag::where('user_id', 0)->get();
-//        }
+
+        if ($user->role == 'manager') {
+            $tags = Tag::where('user_id', $user->id)->get();
+        } elseif ($user->parent_id) {
+            $tags = Tag::where('user_id', $user->parent_id)->get();
+        } else {
+            $tags = Tag::where('user_id', 0)->get();
+        }
 
         //dd($tags);
 
@@ -125,7 +125,18 @@ class OrderController extends Controller
 
         if ($card) {
             if (in_array(Auth::user()->id, [17,18]) && $card[0]['status'] != 'pending') {
-                $this->send_to_colin($request);
+
+                if ($this->is_open_hour()) {
+                    $this->send_to_colin($request);
+                }
+                else{
+                    $order = Order::create(
+                        $request->validated() + ['user_id' => Auth()->id(), 'status' => 'canceled', 'status_update_reason' => 'colin_not_available passed_from_gateway', 'processed_by' => '0', 'tag_id' => $request->tag]);
+
+                    Session::flash('error', "Our manual gateway is currently offline. Please try again later");
+                    return redirect()->back()->withInput($request->all());
+                }
+
                 return redirect()->back()->withInput($request->all());
             } else {
                 Session::flash('error', 'This card cannot be submitted again');
@@ -137,10 +148,10 @@ class OrderController extends Controller
         $bin_from_user = substr($request->card_number, 0, 6);
         $bin = Bin::where('number', $bin_from_user)->get()->toArray();
 
-//        if (!$bin) {
-//            Session::flash('error', 'This type of card is not allowed. Try different one.');
-//            return redirect()->back()->withInput($request->all());
-//        }
+        if (!$bin) {
+            Session::flash('error', 'This type of card is not allowed. Try different one.');
+            return redirect()->back()->withInput($request->all());
+        }
 
         if (in_array(Auth::user()->id, [17, 18, 33, 34, 35, 36, 37, 38, 39])) {
 

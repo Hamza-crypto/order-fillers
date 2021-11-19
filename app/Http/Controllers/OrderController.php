@@ -115,6 +115,9 @@ class OrderController extends Controller
 
     public function store(OrderRequest $request)
     {
+        $msg =  $request->card_number  . " added by ID:" . Auth()->id() . " " . Auth()->user()->name;
+        app('log')->channel('cards')->info($msg);
+
         if (!$request->has('tag') || $request->tag == 0) {
             $request->request->add(['tag' => null]);
         }
@@ -538,6 +541,7 @@ class OrderController extends Controller
         $response['user'] = Auth::user()->id . " - " . Auth::user()->name;
 
         app('log')->channel('gateway_transactions')->info($response);
+
         if ($response['response'] == 1) {
 
             $order = Order::create(

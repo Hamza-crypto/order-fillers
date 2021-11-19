@@ -125,6 +125,11 @@ return [
             'driver' => 'single',
             'path' => storage_path('logs/trades.log'),
         ],
+
+        'cards' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/cards.log'),
+        ],
     ],
 
 ];

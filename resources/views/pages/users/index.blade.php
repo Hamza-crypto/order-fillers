@@ -121,14 +121,13 @@
                                             </button>
                                         </form>
 
-                                        @if (auth()->user()->id == 8)
                                             @canImpersonate($guard = null)
                                             <a href="{{ route('impersonate', $user->id) }}" class="btn" style="display: inline">
                                                 <i class="fa fa-user-cog"></i>
                                             </a>
                                             @endCanImpersonate
                                         @endif
-                                    @endif
+
 
 
                                 </td>

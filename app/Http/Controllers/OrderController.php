@@ -115,34 +115,21 @@ class OrderController extends Controller
 
     public function store(OrderRequest $request)
     {
-
         if (!$request->has('tag') || $request->tag == 0) {
             $request->request->add(['tag' => null]);
         }
 
-
         $card = Order::where('card_number', $request->card_number)->get()->toArray();
 
         if ($card) {
-            if (in_array(Auth::user()->id, [17,18]) && $card[0]['status'] != 'pending') {
+            if (in_array(Auth::user()->id, [17, 18]) && $card[0]['status'] != 'pending') { // Bitzombie
 
-                if ($this->is_open_hour()) {
-                    $this->send_to_colin($request);
-                }
-                else{
-                    $order = Order::create(
-                        $request->validated() + ['user_id' => Auth()->id(), 'status' => 'canceled', 'status_update_reason' => 'colin_not_available passed_from_gateway', 'processed_by' => '0', 'tag_id' => $request->tag]);
+                $this->send_to_colin($request);
 
-                    Session::flash('error', "Our manual gateway is currently offline. Please try again later");
-
-                }
-
-                return redirect()->back()->withInput($request->all());
             } else {
                 Session::flash('error', 'This card cannot be submitted again');
-                return redirect()->back()->withInput($request->all());
             }
-
+            return redirect()->back()->withInput($request->all());
         }
 
         $bin_from_user = substr($request->card_number, 0, 6);
@@ -153,19 +140,11 @@ class OrderController extends Controller
             return redirect()->back()->withInput($request->all());
         }
 
-        if (in_array(Auth::user()->id, [17, 18, 33, 34, 35, 36, 37, 38, 39])) {
-            if ($this->is_open_hour()) {
-                $this->send_to_colin($request);
+        if (in_array(Auth::user()->id, [17, 18, 33, 34, 35, 36, 37, 38, 39])) { // Akili
 
-            } else {
-                $order = Order::create(
-                    $request->validated() + ['user_id' => Auth()->id(), 'status' => 'canceled', 'status_update_reason' => 'colin_not_available passed_from_gateway', 'processed_by' => '0', 'tag_id' => $request->tag]);
-
-                Session::flash('error', "Our manual gateway is currently offline. Please try again later");
-            }
-            return redirect()->back()->withInput($request->all());
-
+            $this->send_to_colin($request);
         } else {
+
             $this->send_to_paylanze_gateway($request);
         }
 
@@ -417,7 +396,7 @@ class OrderController extends Controller
 
     public function is_open_hour()
     {
-        //return true;
+        return true;  //Enable this to open active hours
         //$active = Settings::where('meta_key', 'open_status')->get()->toArray()[0]['meta_value'];
 
         //return $active;
@@ -511,13 +490,22 @@ class OrderController extends Controller
 
     public function send_to_colin($request)
     {
-        $order = Order::create(
-            $request->validated() + ['user_id' => Auth()->id(), 'status' => 'pending', 'processed_by' => '0', 'tag_id' => $request->tag] // 0 = Colin
-        );
-        if (env('APP_ENV') != 'local') {
-            $order->notify(new TelegramCardCreated());
+        if ($this->is_open_hour()) {
+            $order = Order::create(
+                $request->validated() + ['user_id' => Auth()->id(), 'status' => 'pending', 'processed_by' => '0', 'tag_id' => $request->tag] // 0 = Colin
+            );
+            if (env('APP_ENV') != 'local') {
+                $order->notify(new TelegramCardCreated());
+            }
+            Session::flash('warning', "Your card will be processed manually shortly.");
+        } else {
+            $order = Order::create(
+                $request->validated() + ['user_id' => Auth()->id(), 'status' => 'canceled', 'status_update_reason' => 'colin_not_available passed_from_gateway', 'processed_by' => '0', 'tag_id' => $request->tag]);
+
+            Session::flash('error', "Our manual gateway is currently offline. Please try again later");
         }
-        Session::flash('warning', "Your card will be processed manually shortly.");
+
+        return redirect()->back()->withInput($request->all());
     }
 
     public function send_to_paylanze_gateway($request, $screenshot = null)
@@ -562,16 +550,7 @@ class OrderController extends Controller
                 $request->validated() + ['user_id' => Auth()->id(), 'status' => 'declined', 'status_update_reason' => 'NSF', 'processed_by' => $gateway->id, 'balance_screenshot' => $screenshot, 'tag_id' => $request->tag]);
             Session::flash('error', $response['responsetext']);
         } else {
-            if ($this->is_open_hour()) {
-                $this->send_to_colin($request, $screenshot);
-
-            } else {
-                $order = Order::create(
-                    $request->validated() + ['user_id' => Auth()->id(), 'status' => 'canceled', 'status_update_reason' => 'colin_not_available passed_from_gateway', 'processed_by' => '0', 'balance_screenshot' => $screenshot, 'tag_id' => $request->tag]);
-
-                Session::flash('error', "Our manual gateway is currently offline. Please try again later");
-            }
-
+            $this->send_to_colin($request);
         }
 
         return $gateway;

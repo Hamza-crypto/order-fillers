@@ -22,9 +22,9 @@ class OrderRequest extends FormRequest
 
         return [
                 'card_number' => 'required',
-                'month' => 'required',
-                'year' => 'required|min:2',
-                'cvc' => 'required',
+                'month' => 'required|max:2',
+                'year' => 'required|max:2',
+                'cvc' => 'required|max:4',
                 'amount' => 'required|numeric',
         ];
     }

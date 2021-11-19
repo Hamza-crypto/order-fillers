@@ -31,7 +31,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('test:status')
             ->everyMinute();
 
-        $schedule->command('telescope:prune --hours=240')->daily();
+       // $schedule->command('telescope:prune --hours=720')->daily();
     }
 
 

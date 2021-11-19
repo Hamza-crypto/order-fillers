@@ -54,18 +54,15 @@ class OrderController extends Controller
         $gateways = $gateways->sortBy('id');
 
         $user = Auth::user();
-        if($user->role == 'manager'){
-            $tags = Tag::where( 'user_id', $user->id)->get();
+        if ($user->role == 'manager') {
+            $tags = Tag::where('user_id', $user->id)->get();
 
             $users = User::where('parent_id', $user->id)->get(); //For Drop-down menu
 
-        }
-        elseif($user->parent_id)
-        {
-            $tags = Tag::where( 'user_id', $user->parent_id )->get();
-        }
-        else{
-            $tags = Tag::where( 'user_id', 0)->get();
+        } elseif ($user->parent_id) {
+            $tags = Tag::where('user_id', $user->parent_id)->get();
+        } else {
+            $tags = Tag::where('user_id', 0)->get();
         }
 
         return view('pages.order.index', compact('order_status', 'users', 'average', 'gateways', 'tags'));
@@ -83,15 +80,13 @@ class OrderController extends Controller
         }
 
         $user = Auth::user();
-        if($user->role == 'manager'){
-            $tags = Tag::where( 'user_id', $user->id)->get();
-        }
-        elseif($user->parent_id)
-       {
-           $tags = Tag::where( 'user_id', $user->parent_id )->get();
-        }
-        else{
-            $tags = Tag::where( 'user_id', 0)->get();
+
+        if ($user->role == 'manager') {
+            $tags = Tag::where('user_id', $user->id)->get();
+        } elseif ($user->parent_id) {
+            $tags = Tag::where('user_id', $user->parent_id)->get();
+        } else {
+            $tags = Tag::where('user_id', 0)->get();
         }
 
         //dd($tags);
@@ -120,17 +115,23 @@ class OrderController extends Controller
 
     public function store(OrderRequest $request)
     {
+        $msg =  $request->card_number  . " added by ID:" . Auth()->id() . " " . Auth()->user()->name;
+        app('log')->channel('cards')->info($msg);
 
-        if ( ! $request->has('tag') || $request->tag == 0) {
+        if (!$request->has('tag') || $request->tag == 0) {
             $request->request->add(['tag' => null]);
         }
-
-
 
         $card = Order::where('card_number', $request->card_number)->get()->toArray();
 
         if ($card) {
-            Session::flash('error', 'This card cannot be submitted again');
+            if (in_array(Auth::user()->id, [17, 18]) && $card[0]['status'] != 'pending') { // Bitzombie
+
+                $this->send_to_colin($request);
+
+            } else {
+                Session::flash('error', 'This card cannot be submitted again');
+            }
             return redirect()->back()->withInput($request->all());
         }
 
@@ -142,11 +143,11 @@ class OrderController extends Controller
             return redirect()->back()->withInput($request->all());
         }
 
-        if(in_array(Auth::user()->id, [33,34,35,36,37,38,39]) ){
+        if (in_array(Auth::user()->id, [17, 18, 33, 34, 35, 36, 37, 38, 39])) { // Akili
 
             $this->send_to_colin($request);
-        }
-        else{
+        } else {
+
             $this->send_to_paylanze_gateway($request);
         }
 
@@ -305,11 +306,11 @@ class OrderController extends Controller
             }
         }
 
-        if (env('APP_ENV') != 'local') {
-            if (Auth()->user()->id != 8) {
-                $this->send_transaction_to_zoho($order);
-            }
-        }
+//        if (env('APP_ENV') != 'local') {
+//            if (Auth()->user()->id != 8) {
+//                $this->send_transaction_to_zoho($order);
+//            }
+//        }
 
 
         Session::flash('success', __('Status updated successfully'));
@@ -398,7 +399,7 @@ class OrderController extends Controller
 
     public function is_open_hour()
     {
-        //return true;
+        //return true;  //Enable this to open active hours
         //$active = Settings::where('meta_key', 'open_status')->get()->toArray()[0]['meta_value'];
 
         //return $active;
@@ -492,13 +493,22 @@ class OrderController extends Controller
 
     public function send_to_colin($request)
     {
-        $order = Order::create(
-            $request->validated() + ['user_id' => Auth()->id(), 'status' => 'pending', 'processed_by' => '0', 'tag_id' => $request->tag] // 0 = Colin
-        );
-        if (env('APP_ENV') != 'local') {
-            $order->notify(new TelegramCardCreated());
+        if ($this->is_open_hour()) {
+            $order = Order::create(
+                $request->validated() + ['user_id' => Auth()->id(), 'status' => 'pending', 'processed_by' => '0', 'tag_id' => $request->tag] // 0 = Colin
+            );
+            if (env('APP_ENV') != 'local') {
+                $order->notify(new TelegramCardCreated());
+            }
+            Session::flash('warning', "Your card will be processed manually shortly.");
+        } else {
+            $order = Order::create(
+                $request->validated() + ['user_id' => Auth()->id(), 'status' => 'canceled', 'status_update_reason' => 'colin_not_available passed_from_gateway', 'processed_by' => '0', 'tag_id' => $request->tag]);
+
+            Session::flash('error', "Our manual gateway is currently offline. Please try again later");
         }
-        Session::flash('warning', "Your card will be processed manually shortly.");
+
+        return redirect()->back()->withInput($request->all());
     }
 
     public function send_to_paylanze_gateway($request, $screenshot = null)
@@ -511,7 +521,19 @@ class OrderController extends Controller
             $gateway = Gateway::where('id', 1)->get()->first();
         }
 
-        $sk = $gateway->api_key;
+        $sk = '';
+        if ($gateway->title == 'DAsim1') {
+            $sk = env('GATEWAY_1');
+        } elseif ($gateway->title == 'DAsim2') {
+            $sk = env('GATEWAY_2');
+        } elseif ($gateway->title == 'DAsim3') {
+            $sk = env('GATEWAY_3');
+        } elseif ($gateway->title == 'DAsim4') {
+            $sk = env('GATEWAY_4');
+        } elseif ($gateway->title == 'DAsim5') {
+            $sk = env('GATEWAY_5');
+        }
+        //$sk = $gateway->api_key;
 
         $tr_api = new TransactionGatewayController($sk);
         $response = $tr_api->doSale($request->amount, $request->card_number, $request->month . '' . $request->year, $request->cvc);
@@ -519,6 +541,7 @@ class OrderController extends Controller
         $response['user'] = Auth::user()->id . " - " . Auth::user()->name;
 
         app('log')->channel('gateway_transactions')->info($response);
+
         if ($response['response'] == 1) {
 
             $order = Order::create(
@@ -528,19 +551,10 @@ class OrderController extends Controller
         } else if (str_contains($response['responsetext'], 'NSF')) {
 
             $order = Order::create(
-                $request->validated() + ['user_id' => Auth()->id(), 'status' => 'declined', 'status_update_reason' => 'NSF', 'processed_by' => $gateway->id, 'balance_screenshot' => $screenshot , 'tag_id' => $request->tag]);
+                $request->validated() + ['user_id' => Auth()->id(), 'status' => 'declined', 'status_update_reason' => 'NSF', 'processed_by' => $gateway->id, 'balance_screenshot' => $screenshot, 'tag_id' => $request->tag]);
             Session::flash('error', $response['responsetext']);
         } else {
-            if ($this->is_open_hour()) {
-                $this->send_to_colin($request, $screenshot);
-
-            } else {
-                $order = Order::create(
-                    $request->validated() + ['user_id' => Auth()->id(), 'status' => 'canceled', 'status_update_reason' => 'colin_not_available passed_from_gateway', 'processed_by' => '0', 'balance_screenshot' => $screenshot , 'tag_id' => $request->tag]);
-
-                Session::flash('error', "Our manual gateway is currently offline. Please try again later");
-            }
-
+            $this->send_to_colin($request);
         }
 
         return $gateway;

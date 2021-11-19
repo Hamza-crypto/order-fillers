@@ -40,8 +40,6 @@ class ChangeStatus extends Command
 //
 //      //dd($url);
 //    }
-
-        app('log')->channel('order_status')->info('command run');
         $minutes_offset = 15;
         echo "" . now();
         //dd(Carbon::now()->subMinutes(5));

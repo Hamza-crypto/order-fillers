@@ -272,20 +272,23 @@
                                     </div>
                                 </div>
 
-                                    <div class="col-sm">
-                                        <div class="form-group">
-                                            <label class="form-label" for="status"> Gateway </label>
-                                            <select name="gateway" id="gateway"
-                                                    class="form-control form-select custom-select select2"
-                                                    data-toggle="select2">
-                                                <option value="999">{{ __('Select Gateway') }}</option>
-                                                @foreach($gateways as $gateway)
-                                                    <option
-                                                        value="{{ $gateway->id }}">{{ $gateway->title }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+
+                            @endif
+                            @if( $role == 'admin' )
+                                <div class="col-sm">
+                                    <div class="form-group">
+                                        <label class="form-label" for="status"> Gateway </label>
+                                        <select name="gateway" id="gateway"
+                                                class="form-control form-select custom-select select2"
+                                                data-toggle="select2">
+                                            <option value="999">{{ __('Select Gateway') }}</option>
+                                            @foreach($gateways as $gateway)
+                                                <option
+                                                    value="{{ $gateway->id }}">{{ $gateway->title }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
+                                </div>
                             @endif
 
 
@@ -304,14 +307,14 @@
                                 </div>
                             </div>
 
-                                @if( $role == 'manager' )
+                            @if( $role == 'manager' )
                                 <div class="col-sm">
                                     <div class="form-group">
                                         <label class="form-label" for="status"> Tag </label>
                                         <select name="tag" id="tag"
                                                 class="form-control form-select custom-select select2"
                                                 data-toggle="select2">
-                                            <option value="999"> Select Tag </option>
+                                            <option value="999"> Select Tag</option>
                                             @foreach($tags as $tag)
                                                 <option
                                                     value="{{ $tag->id }}">{{ $tag->title }}</option>
@@ -319,7 +322,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                @endif
+                            @endif
                             <div class="col-sm">
                                 <div class="form-group">
                                     <label class="form-label" for="daterange">{{ __('Date Range') }}</label>

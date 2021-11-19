@@ -24,11 +24,20 @@
                     <a class="dropdown-item" href="{{ route('profile.index', 'account') }}">
                         <i class="align-middle me-1" data-feather="user"></i> Profile
                     </a>
+
+                    @impersonating($guard = null)
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{{ route('impersonate.leave') }}">
+                        <i class="align-middle me-1" data-feather="delete"></i> Leave impersonation
+                    </a>
+
+                    @endImpersonating
                     <div class="dropdown-divider"></div>
                     <form method="post" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="dropdown-item">Sign out</button>
                     </form>
+
                 </div>
             </li>
         </ul>

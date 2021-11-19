@@ -138,6 +138,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('tags', TagController::class);
     });
 
+    Route::impersonate();
 
     Route::group(
         ['middleware' => 'admin',

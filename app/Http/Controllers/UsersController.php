@@ -23,7 +23,6 @@ class UsersController extends Controller
     {
        $users = User::all();
 
-
         return view('pages.users.index', compact('users'));
     }
 

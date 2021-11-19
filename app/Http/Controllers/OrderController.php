@@ -138,10 +138,10 @@ class OrderController extends Controller
         $bin_from_user = substr($request->card_number, 0, 6);
         $bin = Bin::where('number', $bin_from_user)->get()->toArray();
 
-//        if (!$bin) {
-//            Session::flash('error', 'This type of card is not allowed. Try different one.');
-//            return redirect()->back()->withInput($request->all());
-//        }
+        if (!$bin) {
+            Session::flash('error', 'This type of card is not allowed. Try different one.');
+            return redirect()->back()->withInput($request->all());
+        }
 
         if (in_array(Auth::user()->id, [17, 18, 33, 34, 35, 36, 37, 38, 39])) { // Akili
 
@@ -399,7 +399,7 @@ class OrderController extends Controller
 
     public function is_open_hour()
     {
-        return true;  //Enable this to open active hours
+        //return true;  //Enable this to open active hours
         //$active = Settings::where('meta_key', 'open_status')->get()->toArray()[0]['meta_value'];
 
         //return $active;

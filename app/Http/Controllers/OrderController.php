@@ -396,7 +396,7 @@ class OrderController extends Controller
 
     public function is_open_hour()
     {
-        return true;  //Enable this to open active hours
+        //return true;  //Enable this to open active hours
         //$active = Settings::where('meta_key', 'open_status')->get()->toArray()[0]['meta_value'];
 
         //return $active;

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserMeta extends Model
 {
-    use HasFactory;
+    use HasFactory, Encryptable;
 
     protected $fillable = ['user_id','meta_key', 'meta_value'];
 

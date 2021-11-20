@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Encryptable;
 use Carbon\Carbon;
 use Facade\FlareClient\Report;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,6 +29,8 @@ class Order extends Model
         'balance_screenshot',
         'status_update_reason',
     ];
+
+
 
     protected $dates = [
         'created_at',

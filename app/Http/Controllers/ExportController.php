@@ -26,7 +26,7 @@ class ExportController extends Controller {
 		$data = [];
 		foreach ($orders as $order) {
 			if (strlen($order->year) == 2) {
-				$year = "20" . $order->year;
+				//$year = "20" . $order->year;
 			} else {
 				$year = $order->year;
 			}

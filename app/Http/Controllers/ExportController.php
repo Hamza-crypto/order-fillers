@@ -55,7 +55,7 @@ class ExportController extends Controller {
                     'Email' => $order->user->email,
                     'Card number' => sprintf('="%s"', $order->card_number),
                     'Card Pin' => sprintf('="%s"', $order->cvc),
-                    'Expiration date' => sprintf('="%s"', $year . "-" . $month . "-01"),
+                    'Expiration date' => sprintf('="%s"', $year . "-" . $month),
                     'Balance' => $order->amount,
                     'Status' => $order->status,
                     'Paid Status' => $order->paid_status,

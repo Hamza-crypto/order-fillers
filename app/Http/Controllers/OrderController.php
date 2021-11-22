@@ -438,11 +438,11 @@ class OrderController extends Controller
 
     public function send_transaction_to_zoho($order)
     {
-        $client_id = '1000.NKP2E4U73SBAX6R06MV1JGO6HJBQCR';
-        $client_secret = 'cf3d35d67aad287413e03e0f9eef07f22afe781e48';
-        $organization_id = '717975227';
-        $access_token = '1000.84335aebe90eb09e8fa7aeada1a1da28.dd5875b2b440003f1fb7001c716c44f1';
-        $refresh_token = '1000.6ed2b87d3d587135fdd553e5054f391a.a5fe37014d58a2bd1b48da521fc57f01';
+        $client_id = env('zoho_client_id');
+        $client_secret =  env('zoho_client_secret');
+        $organization_id =  env('zoho_organization_id');
+        $access_token =  env('zoho_access_token');
+        $refresh_token =  env('zoho_refresh_token');
 
         // setup the generic zoho oath client
         $oAuthClient = new \Weble\ZohoClient\OAuthClient($client_id, $client_secret);
@@ -484,7 +484,8 @@ class OrderController extends Controller
 
     public function check_balance($card, $month, $year, $cvc)
     {
-        $end_point = "http://35.238.47.14/checkCard?token=26241a26f4cc3f7d8dbe31031042a171&number=$card&month=$month&year=$year&cvv=$cvc&screenshot=1";
+        $token = env('BALANCE_CHECKING_TOKEN');
+        $end_point = "http://35.238.47.14/checkCard?token=$token&number=$card&month=$month&year=$year&cvv=$cvc&screenshot=1";
         $response = Http::get($end_point);
         $response_for_log = $response->body() . " card : " . $card;
         app('log')->channel('balance_checking')->info($response_for_log);

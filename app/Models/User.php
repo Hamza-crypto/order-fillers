@@ -55,7 +55,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function messages()
     {
-
         return $this->hasMany(Message::class)
             ->where('user_id', auth()->id());
     }

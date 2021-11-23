@@ -474,7 +474,6 @@ class OrderController extends Controller
 
             ],
 
-
         ];
         return $zohoBooks->bills->create($data);
 //        $bills = $zohoBooks->bills->getList();

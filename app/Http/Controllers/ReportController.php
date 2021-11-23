@@ -28,6 +28,7 @@ class ReportController extends Controller
             ->filters($request->all())
             ->where('created_at', '>=', $date_7th_day_from_now)
             ->where('status', 'accepted')
+            ->where('paid_status', 'unpaid')
             ->get()
             ->groupBy(function ($date) {
                 return Carbon::parse($date->created_at)->format('d M');

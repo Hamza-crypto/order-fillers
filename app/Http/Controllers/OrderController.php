@@ -115,17 +115,20 @@ class OrderController extends Controller
 
     public function store(OrderRequest $request)
     {
-        $msg =  $request->card_number  . " added by ID:" . Auth()->id() . " " . Auth()->user()->name;
+        $msg = $request->card_number . " added by ID:" . Auth()->id() . " " . Auth()->user()->name;
         app('log')->channel('cards')->info($msg);
 
         if (!$request->has('tag') || $request->tag == 0) {
             $request->request->add(['tag' => null]);
         }
 
-        $card = Order::where('card_number', $request->card_number)->get()->toArray();
+
+        $card = Order::where('card_number', $request->card_number)->orderBy('id', 'desc')->first();
+
 
         if ($card) {
-            if (in_array(Auth::user()->id, [17, 18]) && $card[0]['status'] != 'pending') { // Bitzombie
+            $card = $card->toArray();
+            if (in_array(Auth::user()->id, [7,17, 18]) && $card['status'] != 'pending') { // Bitzombie
                 $this->send_to_colin($request);
 
             } else {
@@ -437,10 +440,10 @@ class OrderController extends Controller
     public function send_transaction_to_zoho($order)
     {
         $client_id = env('zoho_client_id');
-        $client_secret =  env('zoho_client_secret');
-        $organization_id =  env('zoho_organization_id');
-        $access_token =  env('zoho_access_token');
-        $refresh_token =  env('zoho_refresh_token');
+        $client_secret = env('zoho_client_secret');
+        $organization_id = env('zoho_organization_id');
+        $access_token = env('zoho_access_token');
+        $refresh_token = env('zoho_refresh_token');
 
         // setup the generic zoho oath client
         $oAuthClient = new \Weble\ZohoClient\OAuthClient($client_id, $client_secret);

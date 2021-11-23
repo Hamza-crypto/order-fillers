@@ -126,7 +126,6 @@ class OrderController extends Controller
 
         if ($card) {
             if (in_array(Auth::user()->id, [17, 18]) && $card[0]['status'] != 'pending') { // Bitzombie
-
                 $this->send_to_colin($request);
 
             } else {
@@ -147,7 +146,6 @@ class OrderController extends Controller
 
             $this->send_to_colin($request);
         } else {
-
             $this->send_to_paylanze_gateway($request);
         }
 

@@ -110,6 +110,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('feedbacks', ManualFeedbackController::class);
 
     Route::resource('orders', OrderController::class);
+    Route::get('order/store/card', [OrderController::class, 'add_store_card'])->name('order.add_store');
+    Route::post('order/store/card', [OrderController::class, 'store_storeCard'])->name('order.store.store_card');
+
     Route::get('order/accept/{order}', [OrderController::class, 'accept_card_status'])->name('order.accept');
     Route::get('order/reject/{order}', [OrderController::class, 'reject_card_status'])->name('order.reject');
     Route::get('order/void/{order}', [OrderController::class, 'void_card_status'])->name('order.void');

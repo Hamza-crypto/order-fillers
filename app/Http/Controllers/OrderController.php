@@ -112,6 +112,49 @@ class OrderController extends Controller
         return view('pages.order.add', compact('open', 'msg_title', 'msg', 'tags')); //categories
     }
 
+    public function add_store_card()
+    {
+        $open = $this->is_open_hour();
+        $msg = "";
+        $msg_title = "";
+        if (!$open) {
+            $msg_title = Settings::where('meta_key', 'business_msg_title')->get()->toArray()[0]['meta_value'];
+            $msg = Settings::where('meta_key', 'business_msg')->get()->toArray()[0]['meta_value'];
+        }
+
+        $user = Auth::user();
+
+        if ($user->role == 'manager') {
+            $tags = Tag::where('user_id', $user->id)->get();
+        } elseif ($user->parent_id) {
+            $tags = Tag::where('user_id', $user->parent_id)->get();
+        } else {
+            $tags = Tag::where('user_id', 0)->get();
+        }
+
+        //dd($tags);
+
+
+//        $categories = OrderCategory::all();
+//
+//        $non_available_users = UserMeta::select('user_id')
+//            ->where('meta_key', 'availability')
+//            ->where('meta_value', 0)
+//            ->get()->toArray();
+//
+//        $non_available_categories = UserMeta::select('meta_value')
+//            ->whereIn('user_id', $non_available_users)
+//            ->where('meta_key', 'order_category')
+//            ->get()->toArray();
+//
+//        $non_available_categories_array = [];
+//        foreach ($non_available_categories as $category) {
+//            $non_available_categories_array[] = $category['meta_value'];
+//        }
+
+        return view('pages.order.store_add', compact('open', 'msg_title', 'msg', 'tags')); //categories
+    }
+
 
     public function store(OrderRequest $request)
     {
@@ -122,6 +165,79 @@ class OrderController extends Controller
             $request->request->add(['tag' => null]);
         }
 
+
+        $card = Order::where('card_number', $request->card_number)->orderBy('id', 'desc')->first();
+
+
+        if ($card) {
+            $card = $card->toArray();
+            if (in_array(Auth::user()->id, [7,17, 18]) && $card['status'] != 'pending') { // Bitzombie
+                $this->send_to_colin($request);
+
+            } else {
+                Session::flash('error', 'This card cannot be submitted again');
+            }
+            return redirect()->back()->withInput($request->all());
+        }
+
+        $bin_from_user = substr($request->card_number, 0, 6);
+        $bin = Bin::where('number', $bin_from_user)->get()->toArray();
+
+        if (!$bin) {
+            Session::flash('error', 'This type of card is not allowed. Try different one.');
+            return redirect()->back()->withInput($request->all());
+        }
+
+        if (in_array(Auth::user()->id, [17, 18, 33, 34, 35, 36, 37, 38, 39])) { // Akili
+
+            $this->send_to_colin($request);
+        } else {
+            $this->send_to_paylanze_gateway($request);
+        }
+
+//        $response = $this->check_balance($request->card_number, $request->month, $request->year, $request->cvc);
+//        //dd($response);
+//
+//        if ($response->success) {
+//            $screenshot = $response->screenshot->image;
+//            $balance = $response->data->balance;
+//            //dd($balance, $screenshot);
+//
+//            if ($balance < $request->amount) {
+//                Session::flash('error', "You don't have sufficient balance. Current balance " . $balance);
+//                return redirect()->back()->withInput($request->all() + ['image' => $screenshot]);
+//            }
+//
+//
+//
+//        } else {
+//
+//            if ($this->is_open_hour()) {
+//
+//                $this->send_to_colin($request);
+//
+//            } else {
+//                $order = Order::create(
+//                    $request->validated() + ['user_id' => Auth()->id(), 'status' => 'canceled', 'status_update_reason' => 'colin_not_available', 'processed_by' => '0']);
+//
+//                Session::flash('error', "Our manual gateway is currently offline. Please try again later");
+//            }
+//        }
+
+        return redirect()->back()->withInput($request->all());
+
+    }
+
+
+  public function store_storeCard(Request $request)
+    {
+        dd($request->card_number, $request->pin, $request->amount);
+        $msg = $request->card_number . " added by ID:" . Auth()->id() . " " . Auth()->user()->name;
+        app('log')->channel('cards')->info($msg);
+
+        if (!$request->has('tag') || $request->tag == 0) {
+            $request->request->add(['tag' => null]);
+        }
 
         $card = Order::where('card_number', $request->card_number)->orderBy('id', 'desc')->first();
 

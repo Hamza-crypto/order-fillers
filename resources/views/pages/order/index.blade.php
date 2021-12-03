@@ -86,6 +86,7 @@
                     {"data": "id"},
                     {"data": "customer"},
                     {"data": "card_number"},
+                    {"data": "pin"},
                     {"data": "month_year"},
                     {"data": "cvc"},
                     {"data": "amount"},
@@ -378,6 +379,7 @@
 
                             <th>User</th>
                             <th>Card #</th>
+                            <th>PIN</th>
                             <th>MM/YY</th>
                             <th>CVC</th>
                             <th>Amount($)</th>

@@ -117,7 +117,13 @@ class DatatableController extends Controller
 
             $order->created_at_new = $order->created_at->format('Y-m-d h:i:s a');
 
-            $order->month_year = $order->month . '/' . $order->year;
+            if(!empty($order->pin)){
+                $order->month_year = '<span class="badge badge-info">StoreCard</span>';
+            }
+            else{
+                $order->month_year = $order->month . '/' . $order->year;
+            }
+
 
             if (($role == 'admin' || $role == 'user') && $order->paid_status() == 'paid') {
                 $order->amount = '<span class="badge badge-' . $order->getPaidStatusColor() . '">' . $order->amount . '</span>';

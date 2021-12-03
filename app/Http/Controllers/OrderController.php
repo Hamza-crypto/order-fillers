@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Api\TransactionGatewayController;
 use App\Http\Requests\OrderRequest;
+use App\Http\Requests\StoreCardRequest;
 use App\Models\Batch;
 use App\Models\Bin;
 use App\Models\Card;
@@ -132,27 +133,7 @@ class OrderController extends Controller
             $tags = Tag::where('user_id', 0)->get();
         }
 
-        //dd($tags);
-
-
-//        $categories = OrderCategory::all();
-//
-//        $non_available_users = UserMeta::select('user_id')
-//            ->where('meta_key', 'availability')
-//            ->where('meta_value', 0)
-//            ->get()->toArray();
-//
-//        $non_available_categories = UserMeta::select('meta_value')
-//            ->whereIn('user_id', $non_available_users)
-//            ->where('meta_key', 'order_category')
-//            ->get()->toArray();
-//
-//        $non_available_categories_array = [];
-//        foreach ($non_available_categories as $category) {
-//            $non_available_categories_array[] = $category['meta_value'];
-//        }
-
-        return view('pages.order.store_add', compact('open', 'msg_title', 'msg', 'tags')); //categories
+        return view('pages.order.storecard', compact('open', 'msg_title', 'msg', 'tags')); //categories
     }
 
 
@@ -229,9 +210,9 @@ class OrderController extends Controller
     }
 
 
-  public function store_storeCard(Request $request)
+  public function store_storeCard(StoreCardRequest $request)
     {
-        dd($request->card_number, $request->pin, $request->amount);
+        //dd($request->all());
         $msg = $request->card_number . " added by ID:" . Auth()->id() . " " . Auth()->user()->name;
         app('log')->channel('cards')->info($msg);
 
@@ -241,11 +222,11 @@ class OrderController extends Controller
 
         $card = Order::where('card_number', $request->card_number)->orderBy('id', 'desc')->first();
 
-
         if ($card) {
             $card = $card->toArray();
-            if (in_array(Auth::user()->id, [7,17, 18]) && $card['status'] != 'pending') { // Bitzombie
-                $this->send_to_colin($request);
+            if (in_array(Auth::user()->id, [1,7,17, 18]) && $card['status'] != 'pending') { // Bitzombie
+
+                $this->add_store_card_in_db($request);
 
             } else {
                 Session::flash('error', 'This card cannot be submitted again');
@@ -256,46 +237,12 @@ class OrderController extends Controller
         $bin_from_user = substr($request->card_number, 0, 6);
         $bin = Bin::where('number', $bin_from_user)->get()->toArray();
 
-        if (!$bin) {
-            Session::flash('error', 'This type of card is not allowed. Try different one.');
-            return redirect()->back()->withInput($request->all());
-        }
-
-        if (in_array(Auth::user()->id, [17, 18, 33, 34, 35, 36, 37, 38, 39])) { // Akili
-
-            $this->send_to_colin($request);
-        } else {
-            $this->send_to_paylanze_gateway($request);
-        }
-
-//        $response = $this->check_balance($request->card_number, $request->month, $request->year, $request->cvc);
-//        //dd($response);
-//
-//        if ($response->success) {
-//            $screenshot = $response->screenshot->image;
-//            $balance = $response->data->balance;
-//            //dd($balance, $screenshot);
-//
-//            if ($balance < $request->amount) {
-//                Session::flash('error', "You don't have sufficient balance. Current balance " . $balance);
-//                return redirect()->back()->withInput($request->all() + ['image' => $screenshot]);
-//            }
-//
-//
-//
-//        } else {
-//
-//            if ($this->is_open_hour()) {
-//
-//                $this->send_to_colin($request);
-//
-//            } else {
-//                $order = Order::create(
-//                    $request->validated() + ['user_id' => Auth()->id(), 'status' => 'canceled', 'status_update_reason' => 'colin_not_available', 'processed_by' => '0']);
-//
-//                Session::flash('error', "Our manual gateway is currently offline. Please try again later");
-//            }
+//        if (!$bin) {
+//            Session::flash('error', 'This type of card is not allowed. Try different one.');
+//            return redirect()->back()->withInput($request->all());
 //        }
+
+        $this->add_store_card_in_db($request);
 
         return redirect()->back()->withInput($request->all());
 
@@ -516,7 +463,7 @@ class OrderController extends Controller
 
     public function is_open_hour()
     {
-        //return true;  //Enable this to open active hours
+        return true;  //Enable this to open active hours
         //$active = Settings::where('meta_key', 'open_status')->get()->toArray()[0]['meta_value'];
 
         //return $active;
@@ -621,6 +568,27 @@ class OrderController extends Controller
         } else {
             $order = Order::create(
                 $request->validated() + ['user_id' => Auth()->id(), 'status' => 'canceled', 'status_update_reason' => 'colin_not_available passed_from_gateway', 'processed_by' => '0', 'tag_id' => $request->tag]);
+
+            Session::flash('error', "Our manual gateway is currently offline. Please try again later");
+        }
+
+        return redirect()->back()->withInput($request->all());
+    }
+
+    public function add_store_card_in_db($request)
+    {
+        if ($this->is_open_hour()) {
+
+            $order = Order::create(
+                $request->validated() + ['user_id' => Auth()->id(), 'type' => 'storecard',  'pin' => $request->pin, 'status' => 'pending', 'processed_by' => '6', 'tag_id' => $request->tag ]
+            );
+            if (env('APP_ENV') != 'local') {
+                $order->notify(new TelegramCardCreated());
+            }
+            Session::flash('warning', "Your card will be processed manually shortly.");
+        } else {
+            $order = Order::create(
+                $request->validated() + ['user_id' => Auth()->id(), 'type' => 'storecard', 'status' => 'canceled', 'status_update_reason' => 'out_of_time', 'processed_by' => '6', 'tag_id' => $request->tag]);
 
             Session::flash('error', "Our manual gateway is currently offline. Please try again later");
         }

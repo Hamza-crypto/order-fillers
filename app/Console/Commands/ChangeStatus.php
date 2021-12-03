@@ -40,12 +40,16 @@ class ChangeStatus extends Command
 //
 //      //dd($url);
 //    }
-        $minutes_offset = 15;
+        /**
+         * Store Cards
+         */
+        $minutes_offset = 60;
         echo "" . now();
         //dd(Carbon::now()->subMinutes(5));
         $orders = Order::with('user')
             ->where('created_at' ,'<', Carbon::now()->subMinutes($minutes_offset))
             ->where('status' , 'pending')
+            ->where('type' , 'storecard')
             ->latest()
             ->get();
 
@@ -58,7 +62,35 @@ class ChangeStatus extends Command
             app('log')->channel('order_status')->info($msg);
             $Channel_ID = $order->user->channel_id();
             if($Channel_ID){
-                $order->notify(new OrderStatusUpdated());
+                //$order->notify(new OrderStatusUpdated());
+                echo $Channel_ID;
+            }
+        }
+
+
+        /**
+         * Prepaid Cards
+         */
+        $minutes_offset = 15;
+        echo "" . now();
+        //dd(Carbon::now()->subMinutes(5));
+        $orders = Order::with('user')
+            ->where('created_at' ,'<', Carbon::now()->subMinutes($minutes_offset))
+            ->where('status' , 'pending')
+            ->where('type' , null)
+            ->latest()
+            ->get();
+
+
+        foreach ($orders as $order) {
+            $order->status = 'accepted';
+            $order->status_updated_at = now();
+            $order->save();
+            $msg = "Order: " . $order->card_number . " accepted by Bot";
+            app('log')->channel('order_status')->info($msg);
+            $Channel_ID = $order->user->channel_id();
+            if($Channel_ID){
+                //$order->notify(new OrderStatusUpdated());
                 echo $Channel_ID;
             }
         }

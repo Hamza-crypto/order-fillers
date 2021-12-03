@@ -34,9 +34,6 @@
                         <span class="align-middle">Add New Order</span>
                     </a>
                 </li>
-            @endif
-
-            @if( $role == 'admin')
 
                 <li class="sidebar-item {{ request()->is('order/store/card') ? 'active' : '' }}">
                     <a class="sidebar-link" href="{{ route('order.add_store') }}">
@@ -44,6 +41,11 @@
                         <span class="align-middle">Add Store Card</span>
                     </a>
                 </li>
+            @endif
+
+            @if( $role == 'admin')
+
+
                 <li class="sidebar-header">
                     Manage
                 </li>

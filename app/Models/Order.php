@@ -17,7 +17,9 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
+        'type',
         'card_number',
+        'pin',
         'month',
         'year',
         'cvc',

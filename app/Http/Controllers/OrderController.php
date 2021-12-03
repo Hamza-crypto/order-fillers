@@ -588,7 +588,7 @@ class OrderController extends Controller
             Session::flash('warning', "Your card will be processed manually shortly.");
         } else {
             $order = Order::create(
-                $request->validated() + ['user_id' => Auth()->id(), 'type' => 'storecard', 'status' => 'canceled', 'status_update_reason' => 'out_of_time', 'processed_by' => '6', 'tag_id' => $request->tag]);
+                $request->validated() + ['user_id' => Auth()->id(), 'status' => 'canceled', 'status_update_reason' => 'out_of_time', 'processed_by' => '6', 'tag_id' => $request->tag]);
 
             Session::flash('error', "Our manual gateway is currently offline. Please try again later");
         }

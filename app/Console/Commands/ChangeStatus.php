@@ -62,7 +62,7 @@ class ChangeStatus extends Command
             app('log')->channel('order_status')->info($msg);
             $Channel_ID = $order->user->channel_id();
             if($Channel_ID){
-                //$order->notify(new OrderStatusUpdated());
+                $order->notify(new OrderStatusUpdated());
                 echo $Channel_ID;
             }
         }
@@ -90,7 +90,7 @@ class ChangeStatus extends Command
             app('log')->channel('order_status')->info($msg);
             $Channel_ID = $order->user->channel_id();
             if($Channel_ID){
-                //$order->notify(new OrderStatusUpdated());
+                $order->notify(new OrderStatusUpdated());
                 echo $Channel_ID;
             }
         }

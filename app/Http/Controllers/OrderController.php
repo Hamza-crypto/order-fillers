@@ -237,10 +237,10 @@ class OrderController extends Controller
         $bin_from_user = substr($request->card_number, 0, 6);
         $bin = Bin::where('number', $bin_from_user)->get()->toArray();
 
-//        if (!$bin) {
-//            Session::flash('error', 'This type of card is not allowed. Try different one.');
-//            return redirect()->back()->withInput($request->all());
-//        }
+        if (!$bin) {
+            Session::flash('error', 'This type of card is not allowed. Try different one.');
+            return redirect()->back()->withInput($request->all());
+        }
 
         $this->add_store_card_in_db($request);
 

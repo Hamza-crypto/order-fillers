@@ -165,7 +165,7 @@ class OrderController extends Controller
         }
 
         $gc = new GiftCashController();
-       // $gc->place_order($request);
+        $gc->place_order($request);
 
         Order::create(
             $request->validated() + ['user_id' => Auth()->id(), 'status' => 'pending',  'processed_by' => 0, 'tag_id' => $request->tag]);

@@ -43,10 +43,8 @@ class GiftCashController extends Controller
         try {
             $response = Http::withBasicAuth(env('GC_USER_NAME'), env('GC_PASSWORD'))->get($url);
 
-            Log::channel('auth')->info('gc:jwt', $response->json());
-
         } catch (\Exception $exception) {
-            Log::channel('auth')->info('gc:jwt:failure', $exception);
+            Log::channel('auth')->info('gc:jwt:failure', $exception->getMessage());
         }
 
         setting([
@@ -74,8 +72,6 @@ class GiftCashController extends Controller
                 "cardCVC" => $request->cvc
             ];
 
-        dd($httpData);
-
         $url = sprintf("%s/order", $this->base_url);
 
         try {
@@ -83,11 +79,11 @@ class GiftCashController extends Controller
                 $url,[$httpData]
             );
 
-            Log::channel('auth')->info('place_order', $response->json());
+            Log::channel('cards')->info('place_order', $response->json());
 
         } catch (\Exception $exception) {
 
-            Log::channel('auth')->info('place_order:exception',);
+            Log::channel('cards')->info('place_order:exception',);
 
         }
 

@@ -130,6 +130,16 @@ return [
             'driver' => 'single',
             'path' => storage_path('logs/cards.log'),
         ],
+
+        'auth' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/auth.log'),
+        ],
+
+        'webhook' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/webhook.log'),
+        ],
     ],
 
 ];

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\GiftCashController;
 use App\Http\Controllers\Api\ZohoController;
 use App\Http\Controllers\BinController;
 use App\Http\Controllers\DashboardController;
@@ -46,6 +47,7 @@ Route::get('test', function (){
 
 });
 
+Route::get('/gc/webhook', [GiftCashController::class, 'gc_webhook'])->name('gc.web_hook');
 
 Route::group(['middleware' => ['auth']], function () {
 

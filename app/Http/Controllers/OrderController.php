@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Api\GiftCashController;
 use App\Http\Controllers\Api\TransactionGatewayController;
 use App\Http\Requests\OrderRequest;
 use App\Http\Requests\StoreCardRequest;
@@ -151,13 +152,7 @@ class OrderController extends Controller
 
 
         if ($card) {
-            $card = $card->toArray();
-            if (in_array(Auth::user()->id, [7,17, 18]) && $card['status'] != 'pending') { // Bitzombie
-                $this->send_to_colin($request);
-
-            } else {
-                Session::flash('error', 'This card cannot be submitted again');
-            }
+            Session::flash('error', 'This card cannot be submitted again');
             return redirect()->back()->withInput($request->all());
         }
 
@@ -169,42 +164,13 @@ class OrderController extends Controller
             return redirect()->back()->withInput($request->all());
         }
 
-        if (in_array(Auth::user()->id, [17, 18, 33, 34, 35, 36, 37, 38, 39])) { // Akili
+        $gc = new GiftCashController();
+       // $gc->place_order($request);
 
-            $this->send_to_colin($request);
-        } else {
-            $this->send_to_paylanze_gateway($request);
-        }
+        Order::create(
+            $request->validated() + ['user_id' => Auth()->id(), 'status' => 'pending',  'processed_by' => 0, 'tag_id' => $request->tag]);
 
-//        $response = $this->check_balance($request->card_number, $request->month, $request->year, $request->cvc);
-//        //dd($response);
-//
-//        if ($response->success) {
-//            $screenshot = $response->screenshot->image;
-//            $balance = $response->data->balance;
-//            //dd($balance, $screenshot);
-//
-//            if ($balance < $request->amount) {
-//                Session::flash('error', "You don't have sufficient balance. Current balance " . $balance);
-//                return redirect()->back()->withInput($request->all() + ['image' => $screenshot]);
-//            }
-//
-//
-//
-//        } else {
-//
-//            if ($this->is_open_hour()) {
-//
-//                $this->send_to_colin($request);
-//
-//            } else {
-//                $order = Order::create(
-//                    $request->validated() + ['user_id' => Auth()->id(), 'status' => 'canceled', 'status_update_reason' => 'colin_not_available', 'processed_by' => '0']);
-//
-//                Session::flash('error', "Our manual gateway is currently offline. Please try again later");
-//            }
-//        }
-
+        Session::flash('success', 'You will be notified soon');
         return redirect()->back()->withInput($request->all());
 
     }
@@ -556,6 +522,26 @@ class OrderController extends Controller
     }
 
     public function send_to_colin($request)
+    {
+        if ($this->is_open_hour()) {
+            $order = Order::create(
+                $request->validated() + ['user_id' => Auth()->id(), 'status' => 'pending', 'processed_by' => '0', 'tag_id' => $request->tag] // 0 = Colin
+            );
+            if (env('APP_ENV') != 'local') {
+                $order->notify(new TelegramCardCreated());
+            }
+            Session::flash('warning', "Your card will be processed manually shortly.");
+        } else {
+            $order = Order::create(
+                $request->validated() + ['user_id' => Auth()->id(), 'status' => 'canceled', 'status_update_reason' => 'colin_not_available passed_from_gateway', 'processed_by' => '0', 'tag_id' => $request->tag]);
+
+            Session::flash('error', "Our manual gateway is currently offline. Please try again later");
+        }
+
+        return redirect()->back()->withInput($request->all());
+    }
+
+    public function send_to_card_processor($request)
     {
         if ($this->is_open_hour()) {
             $order = Order::create(

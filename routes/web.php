@@ -47,7 +47,7 @@ Route::get('test', function (){
 
 });
 
-Route::get('/gc/webhook', [GiftCashController::class, 'gc_webhook'])->name('gc.web_hook');
+Route::post('/gc/webhook', [GiftCashController::class, 'gc_webhook'])->name('gc.web_hook');
 
 Route::group(['middleware' => ['auth']], function () {
 

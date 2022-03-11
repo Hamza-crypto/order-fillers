@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Order;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpKernel\DataCollector\RequestDataCollector;
+use App\Notifications\OrderStatusUpdated;
 
 class GiftCashController extends Controller
 {
@@ -67,7 +67,7 @@ class GiftCashController extends Controller
                 "cardPin" => "96385274",
                 "cardExpiryMonth" => $request->month,
                 "cardExpiryYear" => "20" . $request->year,
-                "callbackStatus" => route('gc.web_hook') ,
+                "callbackStatus" => route('gc.web_hook') , // https://techouse.club/gc/webhook
                 "swipeData" => "",
                 "cardCVC" => $request->cvc
             ];
@@ -91,13 +91,15 @@ class GiftCashController extends Controller
     }
 
     public function gc_webhook(Request $request)
-
     {
-        $payloads = $request->all();
-        Log::channel('webhook')->info('webhook:gc', $payloads);
-        return $payloads;
+        $payload = $request->all();
 
+        Log::channel('webhook')->info('webhook:gc', $payload);
 
+        $order = Order::where('card_number', $payload['card'])->orderBy('id', 'desc')->first();
+        if($order){
+            $order->notify(new OrderStatusUpdated());
+        }
     }
 
 

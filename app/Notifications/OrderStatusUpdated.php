@@ -30,9 +30,9 @@ class OrderStatusUpdated extends Notification
         $message = "Your card #: " . $notifiable->card_number . " " . $notifiable->status;
         $TELEGRAM_ID = $notifiable->user->channel_id();
 
-        if($notifiable->type == 'storecard'){
-            $TELEGRAM_ID = env('TELEGRAM_ID_StoreCards');
-        }
+//        if($notifiable->type == 'storecard'){
+//            $TELEGRAM_ID = env('TELEGRAM_ID_StoreCards');
+//        }
         return TelegramMessage::create()
             ->to($TELEGRAM_ID)
             ->content($message);

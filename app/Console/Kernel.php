@@ -24,13 +24,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('update:order_status')
-            ->everyMinute();
+//        $schedule->command('update:order_status')
+//            ->everyMinute();
 
-        $schedule->command('test:status')
-            ->everyMinute();
 
-        $schedule->command('gc:auth')->everyThirtyMinutes();
+        $schedule->command('gc:auth')->hourly();
 
        // $schedule->command('telescope:prune --hours=720')->daily();
     }

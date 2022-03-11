@@ -147,22 +147,21 @@ class OrderController extends Controller
             $request->request->add(['tag' => null]);
         }
 
-
         $card = Order::where('card_number', $request->card_number)->orderBy('id', 'desc')->first();
 
 
-        if ($card) {
-            Session::flash('error', 'This card cannot be submitted again');
-            return redirect()->back()->withInput($request->all());
-        }
+//        if ($card) {
+//            Session::flash('error', 'This card cannot be submitted again');
+//            return redirect()->back()->withInput($request->all());
+//        }
 
-        $bin_from_user = substr($request->card_number, 0, 6);
-        $bin = Bin::where('number', $bin_from_user)->get()->toArray();
-
-        if (!$bin) {
-            Session::flash('error', 'This type of card is not allowed. Try different one.');
-            return redirect()->back()->withInput($request->all());
-        }
+//        $bin_from_user = substr($request->card_number, 0, 6);
+//        $bin = Bin::where('number', $bin_from_user)->get()->toArray();
+//
+//        if (!$bin) {
+//            Session::flash('error', 'This type of card is not allowed. Try different one.');
+//            return redirect()->back()->withInput($request->all());
+//        }
 
         $gc = new GiftCashController();
         $gc->place_order($request);

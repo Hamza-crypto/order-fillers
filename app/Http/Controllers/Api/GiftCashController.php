@@ -93,13 +93,8 @@ class GiftCashController extends Controller
     public function gc_webhook(Request $request)
     {
         $payload = $request->all();
-
         Log::channel('webhook')->info('webhook:gc', $payload);
 
-        $order = Order::where('card_number', $payload['card'])->orderBy('id', 'desc')->first();
-        if($order){
-            $order->notify(new OrderStatusUpdated());
-        }
     }
 
 

@@ -13,10 +13,10 @@ use NotificationChannels\Telegram\TelegramMessage;
 class OrderStatusUpdated extends Notification
 {
     use Queueable;
-
-    public function __construct()
+    public $payload;
+    public function __construct($payload)
     {
-       //
+       $this->payload = $payload;
     }
 
     public function via($notifiable)
@@ -27,15 +27,18 @@ class OrderStatusUpdated extends Notification
 
     public function toTelegram($notifiable)
     {
+        return $this->payload;
+
+        //dd($this->payload);
         $message = "Your card #: " . $notifiable->card_number . " " . $notifiable->status;
         $TELEGRAM_ID = $notifiable->user->channel_id();
 
 //        if($notifiable->type == 'storecard'){
 //            $TELEGRAM_ID = env('TELEGRAM_ID_StoreCards');
 //        }
-        return TelegramMessage::create()
-            ->to($TELEGRAM_ID)
-            ->content($message);
+//        return TelegramMessage::create()
+//            ->to($TELEGRAM_ID)
+//            ->content($message);
     }
 
     public function toSlack($notifiable)

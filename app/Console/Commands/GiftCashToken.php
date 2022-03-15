@@ -2,13 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Gateway;
 use App\Http\Controllers\Api\GiftCashController;
-use App\Models\Order;
-use App\Notifications\OrderStatusUpdated;
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
-use App\Models\PostMessage;
-use Illuminate\Support\Facades\Http;
+
 
 class GiftCashToken extends Command
 {
@@ -24,8 +21,10 @@ class GiftCashToken extends Command
     public function handle()
     {
         $gc = new GiftCashController();
-        $gc->jwt();
-
+        $gateways = Gateway::all();
+        foreach ($gateways as $gateway) {
+            $gc->jwt($gateway->id, $gateway->api_key, $gateway->api_secret);
+        }
         echo "Token generated successfully";
     }
 }

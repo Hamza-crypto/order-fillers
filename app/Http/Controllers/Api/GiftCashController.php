@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Order;
+use App\Models\Gateway;
+use App\Models\UserMeta;
+use Illuminate\Auth\Access\Gate;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use App\Notifications\OrderStatusUpdated;
 
 class GiftCashController extends Controller
@@ -28,27 +32,26 @@ class GiftCashController extends Controller
             $this->jwt();
         }
 
+
+        $gateway_id = UserMeta::where('user_id' , Auth::id())
+        ->where('meta_key', );
+
         $this->token = setting('jwt');
     }
 
-    public function jwt()
+    public function jwt($id, $username , $password)
     {
         $url = sprintf("%s/auth", $this->base_url);
 
-        [
-            'Username' => env('GC_USER_NAME') . 'asd',
-            'Password' => env('GC_PASSWORD')
-        ];
-
         try {
-            $response = Http::withBasicAuth(env('GC_USER_NAME'), env('GC_PASSWORD'))->get($url);
+            $response = Http::withBasicAuth($username, $password)->get($url);
 
         } catch (\Exception $exception) {
             Log::channel('auth')->info('gc:jwt:failure', $exception->getMessage());
         }
 
         setting([
-            'jwt' => $response['data']['attributes']['token'],
+            'jwt' .$id  => $response['data']['attributes']['token'],
         ])->save();
 
         Log::channel('auth')->info('gc:jwt:success', $response->json());
@@ -61,14 +64,11 @@ class GiftCashController extends Controller
         $this->login();
         $httpData =
             [
-                "card" => 379,
                 "cardBalance" => $request->amount,
                 "cardNumber" => $request->card_number,
-                "cardPin" => "96385274",
                 "cardExpiryMonth" => $request->month,
                 "cardExpiryYear" => "20" . $request->year,
                 "callbackStatus" => route('gc.web_hook') , // https://techouse.club/gc/webhook
-                "swipeData" => "",
                 "cardCVC" => $request->cvc
             ];
 

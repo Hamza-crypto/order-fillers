@@ -510,16 +510,6 @@ class OrderController extends Controller
 
     }
 
-    public function check_balance($card, $month, $year, $cvc)
-    {
-        $token = env('BALANCE_CHECKING_TOKEN');
-        $end_point = "http://35.238.47.14/checkCard?token=$token&number=$card&month=$month&year=$year&cvv=$cvc&screenshot=1";
-        $response = Http::get($end_point);
-        $response_for_log = $response->body() . " card : " . $card;
-        app('log')->channel('balance_checking')->info($response_for_log);
-        return json_decode($response);
-    }
-
     public function send_to_colin($request)
     {
         if ($this->is_open_hour()) {

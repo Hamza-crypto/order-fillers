@@ -21,8 +21,6 @@ class UsersController extends Controller
 
     public function index()
     {
-        $user = User::find(6);
-        dd($user->gateway_name());
        $users = User::all();
 
         return view('pages.users.index', compact('users'));

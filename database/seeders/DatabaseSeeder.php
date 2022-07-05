@@ -22,13 +22,10 @@ class DatabaseSeeder extends Seeder
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
             'role' => 'admin'
         ]);
-//fsdfds
        \App\Models\User::factory(5)->create();
-        \App\Models\Order::factory(50)->create();
+        \App\Models\Order::factory(5000)->create();
+        \App\Models\Gateway::factory(5)->create();
 
-        if (env('APP_ENV') == 'local') {
-             \App\Models\Order::factory(50)->create();
-        }
 
     }
 }

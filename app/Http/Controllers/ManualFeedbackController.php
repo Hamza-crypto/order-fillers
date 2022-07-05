@@ -28,6 +28,7 @@ class ManualFeedbackController extends Controller
 
     public function store(Request $request){
 
+        dd($request->all());
         ManualFeedback::create(
            $request->all() + ['user_id' => Auth()->id(), 'status' => 'pending']
             );

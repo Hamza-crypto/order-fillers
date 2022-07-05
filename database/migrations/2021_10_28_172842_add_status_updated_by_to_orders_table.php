@@ -14,8 +14,7 @@ class AddStatusUpdatedByToOrdersTable extends Migration
     public function up()
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->text('status_updated_by')->nullable()->after('status_updated_at');
-            $table->text('status_update_reason')->nullable()->after('status_updated_by');
+
         });
     }
 

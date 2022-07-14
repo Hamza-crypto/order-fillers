@@ -1,17 +1,15 @@
 **Description:**
-laravel Based orders fillers project
+Laravel + Vue Based GiftCard Management System
 
 **Admin Dashboard**
 ![Screenshot](dashboard.png)
 
-
-Edit Order Form
+Orders Page
 ![Screenshot](orders.png)
 
+Users Page
+![Screenshot](users.png)
 
-usdt, btc-adress
-
-show rate
 
 
 

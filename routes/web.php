@@ -162,3 +162,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
 });
+Route::get('clear', function (){
+    \Artisan::call('optimize:clear');
+    dd('Cache cleared');
+});

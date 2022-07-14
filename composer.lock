@@ -4,8 +4,71 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4eb64f1db4ca193418ba848cfd51ee5e",
+    "content-hash": "cb45cdc7464e659680b113d402de5046",
     "packages": [
+        {
+            "name": "anlutro/l4-settings",
+            "version": "v1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/anlutro/laravel-settings.git",
+                "reference": "679bba82ff93a4de4e63d3305ee5454eb8590ccc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/anlutro/laravel-settings/zipball/679bba82ff93a4de4e63d3305ee5454eb8590ccc",
+                "reference": "679bba82ff93a4de4e63d3305ee5454eb8590ccc",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/cache": "^4.2|^5|^6|^7|^8|^9",
+                "illuminate/support": "^4.2|^5|^6|^7|^8|^9"
+            },
+            "require-dev": {
+                "laravel/framework": ">=5.7",
+                "mockery/mockery": "^1.2",
+                "phpunit/phpunit": "^8.0"
+            },
+            "suggest": {
+                "illuminate/database": "Save settings to a database table.",
+                "illuminate/filesystem": "Save settings to a JSON file."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Setting": "anlutro\\LaravelSettings\\Facade"
+                    },
+                    "providers": [
+                        "anlutro\\LaravelSettings\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "anlutro\\LaravelSettings\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andreas Lutro",
+                    "email": "anlutro@gmail.com"
+                }
+            ],
+            "description": "Persistent settings in Laravel.",
+            "support": {
+                "issues": "https://github.com/anlutro/laravel-settings/issues",
+                "source": "https://github.com/anlutro/laravel-settings/tree/v1.1.1"
+            },
+            "time": "2022-02-11T13:01:17+00:00"
+        },
         {
             "name": "asad/oauth2-zoho",
             "version": "1.1.0",
@@ -3810,6 +3873,57 @@
                 }
             ],
             "time": "2021-08-28T21:27:29+00:00"
+        },
+        {
+            "name": "picqer/exact-php-client",
+            "version": "3.41.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/picqer/exact-php-client.git",
+                "reference": "69146a15dae35cb400b4ecf29ab4b723d85f99aa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/picqer/exact-php-client/zipball/69146a15dae35cb400b4ecf29ab4b723d85f99aa",
+                "reference": "69146a15dae35cb400b4ecf29ab4b723d85f99aa",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "guzzlehttp/guzzle": "~6.0|~7.0",
+                "php": ">=7.2.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^8.5|^9.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Picqer\\": "src/Picqer"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Stephan Groen",
+                    "email": "info@picqer.com"
+                }
+            ],
+            "description": "A PHP Client for the Exact API",
+            "homepage": "http://github.com/picqer/exact-php-client",
+            "keywords": [
+                "api",
+                "exact",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/picqer/exact-php-client/issues",
+                "source": "https://github.com/picqer/exact-php-client/tree/3.41.0"
+            },
+            "time": "2022-06-09T10:13:18+00:00"
         },
         {
             "name": "pragmarx/google2fa",
@@ -7677,6 +7791,65 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.10.0"
             },
             "time": "2021-03-09T10:59:23+00:00"
+        },
+        {
+            "name": "websmurf/laravel-exact-online",
+            "version": "v0.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/websmurf/laravel-exact-online.git",
+                "reference": "7b49a2c8ac9b754147b37655098cf40e7b1f0e39"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/websmurf/laravel-exact-online/zipball/7b49a2c8ac9b754147b37655098cf40e7b1f0e39",
+                "reference": "7b49a2c8ac9b754147b37655098cf40e7b1f0e39",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "picqer/exact-php-client": "^3.1"
+            },
+            "require-dev": {
+                "laravel/framework": "^7.0",
+                "phpunit/phpunit": "~8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Websmurf\\LaravelExactOnline\\Providers\\LaravelExactOnlineServiceProvider"
+                    ],
+                    "aliases": {
+                        "ExactOnline": "Websmurf\\LaravelExactOnline\\LaravelExactOnlineFacade"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Websmurf\\LaravelExactOnline\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Adam van Dongen",
+                    "email": "adam@bandhosting.nl"
+                },
+                {
+                    "name": "Joshua de Gier",
+                    "email": "info@pendo.nl"
+                }
+            ],
+            "description": "Laravel Facade wrapper for Exact Online PHP API",
+            "support": {
+                "issues": "https://github.com/websmurf/laravel-exact-online/issues",
+                "source": "https://github.com/websmurf/laravel-exact-online/tree/v0.6.0"
+            },
+            "time": "2021-11-18T14:26:40+00:00"
         }
     ],
     "packages-dev": [
@@ -10126,5 +10299,5 @@
         "php": "^7.3|^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.2.0"
 }

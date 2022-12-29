@@ -13,7 +13,7 @@ class OrderSeeder extends Seeder
         echo "Total Orders: $count" . PHP_EOL;
         for ($j = 0; $j < 1; $j++) {
             $orders = [];
-            for ($i = 0; $i < 5000; $i++) {
+            for ($i = 0; $i < 1000; $i++) {
                 $orders[] = [
                     'user_id' => rand(1, 5),
                     'card_number' => rand(4711111111111111, 4799999999999999),

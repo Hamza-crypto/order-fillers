@@ -170,6 +170,7 @@ return [
         Laravel\Telescope\TelescopeServiceProvider::class,
         App\Providers\TelescopeServiceProvider::class,
         Lab404\Impersonate\ImpersonateServiceProvider::class,
+        Barryvdh\Debugbar\ServiceProvider::class,
 
 
 

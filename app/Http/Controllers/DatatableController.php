@@ -22,7 +22,7 @@ class DatatableController extends Controller
         }
 
         $user = Auth()->user();
-        $role = Auth()->user()->role;
+        $role = $user->role;
 
         if ($role != 'admin') {
             $request_user_rate = $user->rate();
@@ -52,7 +52,6 @@ class DatatableController extends Controller
 
         $start = $request->length == -1 ? 0 : $request->start;
         $limit = $request->length == -1 ? $totalData : $request->length;
-
 //        $orderColumnIndex = $request->input('order.0.column');
 //        $orderDbColumn = $dbColumns[$orderColumnIndex];
 //        $orderDirection = $request->input('order.0.dir');
@@ -80,6 +79,7 @@ class DatatableController extends Controller
             $pending_amount = $totalOrders->where('status', 'pending')->sum('amount');
 
             $orders = $orders->offset($start)->limit($limit)->get();
+//            dd($total_sum,$accepted_amount, $rejected_amount, $pending_amount,   $orders, $start, $limit);
 
         } else {
             $search = $request->input('search.value');

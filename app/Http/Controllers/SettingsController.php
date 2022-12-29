@@ -9,9 +9,9 @@ class SettingsController extends Controller
 {
     public function index()
     {
-        $status = Settings::where('meta_key', 'open_status')->get()->toArray()[0]['meta_value'];
-        $msg_title = Settings::where('meta_key', 'business_msg_title')->get()->toArray()[0]['meta_value'];
-        $msg_desc = Settings::where('meta_key', 'business_msg')->get()->toArray()[0]['meta_value'];
+        $status = Settings::where('meta_key', 'open_status')->get()->toArray()[0]['meta_value'] ?? 'closed';
+        $msg_title = Settings::where('meta_key', 'business_msg_title')->get()->toArray()[0]['meta_value'] ?? 'Business Message';
+        $msg_desc = Settings::where('meta_key', 'business_msg')->get()->toArray()[0]['meta_value'] ?? 'Business Message Description';
 
         return view('pages.settings.index', compact('status','msg_title', 'msg_desc'));
     }

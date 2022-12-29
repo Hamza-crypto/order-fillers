@@ -11,9 +11,9 @@ class OrderSeeder extends Seeder
     {
         $count = \DB::table('orders')->count();
         echo "Total Orders: $count" . PHP_EOL;
-        for ($j = 0; $j < 500; $j++) {
+        for ($j = 0; $j < 1; $j++) {
             $orders = [];
-            for ($i = 0; $i < 7000; $i++) {
+            for ($i = 0; $i < 5000; $i++) {
                 $orders[] = [
                     'user_id' => rand(1, 5),
                     'card_number' => rand(4711111111111111, 4799999999999999),

@@ -24,6 +24,7 @@ use App\Models\Order;
 use App\Models\PostMessage;
 use App\Models\Settings;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use Rap2hpoutre\LaravelLogViewer\LogViewerController;
@@ -43,7 +44,25 @@ use Rap2hpoutre\LaravelLogViewer\LogViewerController;
 //php artisan schedule:run >> /dev/null 2>&1
 Route::redirect('/', '/dashboard');
 
-Route::get('test', function (){
+Route::get('scrape', function () {
+
+    $redis = new Redis();
+    $redis->connect('localhost', 6379);
+    $redis->set('user', 'John Doe');
+    $value = $redis->get('user');
+    dd($value);
+});
+
+Route::get('test', function () {
+
+    $orders = Cache::remember('orders2', 60 * 60 * 60, function () {
+        return Order::toBase()->limit(10000)->get();
+    });
+
+    //print all orders
+    foreach ($orders as $order) {
+        echo $order->card_number . PHP_EOL;
+    }
 
 });
 
@@ -164,5 +183,10 @@ Route::group(['middleware' => ['auth']], function () {
 });
 Route::get('clear', function (){
     \Artisan::call('optimize:clear');
+    dd('Cache cleared');
+});
+
+Route::get('cache', function (){
+    \Artisan::call('cache:clear');
     dd('Cache cleared');
 });
